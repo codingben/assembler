@@ -1,0 +1,12 @@
+Please enter a letter:
+
+I am young. You are young. All of us are young. 
+"I THINK WE NEED SOME HELP. PLEASE" help. No, no no, 
+i do not 
+ need help
+whatsoever. 
+"TODAY’S DATE IS 
+ //"... 
+I am  years old, are you  years old? maybe  years?
+
+Program completed successfully.
