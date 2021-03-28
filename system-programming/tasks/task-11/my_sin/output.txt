@@ -1,0 +1,6 @@
+Enter a value to calculate the sine:
+
+my_sin(3.000000) = 0.141120
+sin(3.000000) = 0.141120
+
+Program completed successfully.
