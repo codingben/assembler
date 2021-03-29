@@ -1,4 +1,4 @@
-Enter a value to calculate the sine:
+Enter value (between -25.0 to 25.0) to calculate the sine:
 
 my_sin(3.000000) = 0.141120
 sin(3.000000) = 0.141120

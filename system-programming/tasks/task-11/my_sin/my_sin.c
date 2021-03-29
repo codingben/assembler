@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <math.h>
 
+/*
+ * Returns x factorial as an integer.
+ */
 double factorial(int x)
 {
     int i = 0;
@@ -18,6 +21,9 @@ double factorial(int x)
     return result;
 }
 
+/*
+ * Returns x raised to the power of y.
+ */
 double power(double x, int y)
 {
     int i = 0;
@@ -31,6 +37,9 @@ double power(double x, int y)
     return result;
 }
 
+/*
+ * Returns the sine of a radian angle x.
+ */
 double my_sin(double x)
 {
     int i = 0;
@@ -51,13 +60,19 @@ int main()
 {
     double user_input;
 
-    printf("Enter a value to calculate the sine:\n\n");
+    printf("Enter value (between -25.0 to 25.0) to calculate the sine:\n");
 
     scanf("%lf", &user_input);
 
-    printf("my_sin(%f) = %f\n", user_input, my_sin(user_input));
-    printf("sin(%f) = %f\n", user_input, sin(user_input));
+    if (user_input < -25.0 || user_input > 25.0)
+    {
+        printf("The input value must be between -25.0 and 25.0.");
+        return 0;
+    }
 
-    printf("\nProgram completed successfully.");
+    printf("\nmy_sin(%f) = %f", user_input, my_sin(user_input));
+    printf("\nsin(%f) = %f", user_input, sin(user_input));
+
+    printf("\n\nProgram completed successfully.");
     return 0;
 }
