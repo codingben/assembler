@@ -1,0 +1,6 @@
+Question 1:
+
+a) Answer: Incorrect. Explanation: The 'a' is not equal to "a" because the type of 'a' is int and "a" is array of char.
+b) Answer: Incorrect and sometimes correct. Explanation: It is only correct if a pointer is passed to the function.
+
+Answered by Ben Ukhanov (ID: 318464799)
