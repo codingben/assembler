@@ -1,2 +1,2 @@
-main:
-	gcc -ansi -pedantic -Wall src/main.c -o bin/main
+assembler:
+	gcc -ansi -pedantic -Wall src/assembler.c -o bin/assembler
