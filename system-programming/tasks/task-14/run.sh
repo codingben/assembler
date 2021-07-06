@@ -1,4 +1,4 @@
 echo "Build:"
 make
 echo "Run:"
-./bin/main
+./bin/main hello world
