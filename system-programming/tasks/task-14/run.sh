@@ -1,4 +1,4 @@
-echo "Build:"
+echo "-------------------------------- Build --------------------------------\n"
 make
-echo "Run:"
-./bin/assembler hello world
+echo "\n-------------------------------- Run --------------------------------\n"
+./bin/assembler ./tests/hello.as ./tests/world.as
