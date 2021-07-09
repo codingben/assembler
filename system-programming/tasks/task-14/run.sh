@@ -1,4 +1,6 @@
+make clean
+make mkdir
 echo "-------------------------------- Build --------------------------------\n"
-make
+make compile
 echo "\n-------------------------------- Run --------------------------------\n"
-./bin/assembler ./tests/hello.as ./tests/world.as
+./bin/main ./tests/hello.as ./tests/world.as
