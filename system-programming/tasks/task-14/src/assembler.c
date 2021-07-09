@@ -1,61 +1,32 @@
 #include <stdio.h>
-#include <string.h>
+#include "reader.h"
 
-int main(int argc, char **argv)
+int main(int arguments_count, char **arguments)
 {
     int i;
 
-    if (argc < 2)
+    if (arguments_count < 2)
     {
-        printf("error: could not find a file to compile.\n");
-        return 0;
+        printf("Could not find a file to compile.\n");
+        return 1; /* EXIT_FAILURE */
     }
 
-    for (i = 1; i < argc; ++i)
+    for (i = 1; i < arguments_count; ++i)
     {
-        FILE *file;
-        char character;
-        char *extension;
-        char *ext = ".as";
+        const char *filename = arguments[i];
 
-        printf("Read: %s\n\n", argv[i]);
+        /* parse (read_file) */
+        /* if (parse) compile */
+        /* if (compile) build */
 
-        extension = strrchr(argv[i], '.');
-
-        if (strcmp(extension, ext) != 0)
+        if (validate_extension(filename) != 0)
         {
-            printf("The assembly file must be with .as extension.\n\n");
-            continue;
+            printf("Assembly file must be with .as extension.\n\n");
+            return 1;
         }
 
-        /* Open the source file with the ".c" extension (e.g. prnt.c). */
-        file = fopen(argv[i], "r");
-
-        /* If something is wrong then print the error message. */
-        if (file == NULL)
-        {
-            perror("Unable to open file");
-            printf("\n");
-            continue;
-        }
-
-        /* Print all the file content. */
-        while (1)
-        {
-            character = fgetc(file);
-
-            if (character == EOF)
-            {
-                break;
-            }
-
-            printf("%c", character);
-        }
-
-        printf("\n\n");
-
-        fclose(file);
+        read_file(filename);
     }
 
-    return 0;
+    return 0; /* EXIT_SUCCESS */
 }
