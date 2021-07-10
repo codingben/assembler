@@ -1,10 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include "constants.h"
 #include "logger.h"
-
-/* TODO: Make sure it's not 81 */
-/* TODO: Move this define out of here */
-#define MAX_LINE_LENGTH 80
 
 int parse_line(const char *filename, char *line, int line_index)
 {
