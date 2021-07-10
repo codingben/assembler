@@ -2,7 +2,7 @@
 #include "constants.h"
 #include "logger.h"
 #include "utils.h"
-#include "reader.h"
+#include "parser.h"
 
 int main(int argument_count, char **argument_vector)
 {
@@ -30,7 +30,7 @@ int main(int argument_count, char **argument_vector)
         }
 
         /* Analyze syntax and then send to translator */
-        read_file(filename);
+        parse(filename);
     }
 
     return EXIT_SUCCESS;

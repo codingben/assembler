@@ -5,8 +5,7 @@
 
 int parse_line(const char *filename, char *line, int line_index)
 {
-    /* TODO: Syntax parser and error collector for output */
-    /* TODO: Check syntax and then send to translator */
+    /* TODO: Analyze syntax, and collect error(s) */
     /* TODO: Iterate here to get the column index */
 
     printf(LOG_FORMAT, filename, line_index, line);
@@ -40,6 +39,26 @@ int parse_file(FILE *file, const char *filename)
             strncat(line, &character, 1);
         }
     } while (character != EOF);
+
+    return 0;
+}
+
+int parse(const char *filename)
+{
+    FILE *file = fopen(filename, "r");
+
+    if (file != NULL)
+    {
+        /* Parse file to analyze syntax */
+        parse_file(file, filename);
+
+        /* Close file after parsing */
+        fclose(file);
+    }
+    else
+    {
+        perror(FAILED_OPEN_FILE);
+    }
 
     return 0;
 }
