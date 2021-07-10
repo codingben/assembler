@@ -11,4 +11,4 @@ echo "#---------------------------------------------------#"
 echo "# Run"
 echo "#---------------------------------------------------#"
 
-./bin/main ./tests/hello.as ./tests/world.as
+./bin/assembler ./tests/hello.as ./tests/world.as
