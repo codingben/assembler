@@ -1,21 +1,5 @@
 #include <stdio.h>
-#include <string.h>
 #include "parser.h"
-
-int validate_extension(const char *filename)
-{
-    char *extension;
-    char *ext = ".as"; /* TODO: Move to constants */
-
-    extension = strrchr(filename, '.');
-
-    if (strcmp(extension, ext) != 0)
-    {
-        return 1;
-    }
-
-    return 0;
-}
 
 void read_file(const char *filename)
 {
