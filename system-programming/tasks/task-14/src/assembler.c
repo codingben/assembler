@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "utils.h"
 #include "reader.h"
 
 int main(int arguments_count, char **arguments)
@@ -22,7 +23,7 @@ int main(int arguments_count, char **arguments)
         if (validate_extension(filename) != 0)
         {
             printf("Assembly file must be with .as extension.\n\n");
-            return 1;
+            continue;
         }
 
         read_file(filename);
