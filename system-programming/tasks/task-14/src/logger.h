@@ -1,8 +1,9 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-/* sourcefile:lineno:column: message */
-/* sourcefile:lineno: message */
+/* Log format is: sourcefile:linenum: message */
 #define LOG_FORMAT "%s:%d: %s\n"
+
+/* TODO: Add sourcefile:linenum:column: message */
 
 #endif

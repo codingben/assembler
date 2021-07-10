@@ -25,18 +25,18 @@ int parse_file(FILE *file, const char *filename)
 
         if (character == EOF || character == '\n')
         {
-            /* line parser */
+            /* Line parser */
             parse_line(filename, line, line_index);
 
-            /* clear line */
+            /* Clear line */
             memset(line, 0, sizeof(line));
 
-            /* start reading next line */
+            /* Go to next line */
             line_index++;
         }
         else
         {
-            /* add character to line */
+            /* Add character to line */
             strncat(line, &character, 1);
         }
     } while (character != EOF);
