@@ -1,20 +1,23 @@
 #include <stdio.h>
+#include "constants.h"
+#include "logger.h"
 #include "utils.h"
 #include "reader.h"
 
-int main(int arguments_count, char **arguments)
+int main(int argument_count, char **argument_vector)
 {
     int i;
+    const char *filename = argument_vector[0];
 
-    if (arguments_count < 2)
+    if (argument_count < 2)
     {
-        printf("Could not find a file to compile.\n");
-        return 1; /* EXIT_FAILURE */
+        printf(LOG_FORMAT, filename, __LINE__, NO_FILE_TO_COMPILE);
+        return EXIT_FAILURE;
     }
 
-    for (i = 1; i < arguments_count; ++i)
+    for (i = 1; i < argument_count; ++i)
     {
-        const char *filename = arguments[i];
+        filename = argument_vector[i];
 
         /* parse (read_file) */
         /* if (parse) compile */
@@ -22,12 +25,13 @@ int main(int arguments_count, char **arguments)
 
         if (validate_extension(filename) != 0)
         {
-            printf("Assembly file must be with .as extension.\n\n");
+            printf(LOG_FORMAT, filename, -1, NO_AS_EXTENSION);
             continue;
         }
 
+        /* Analyze syntax and then send to translator */
         read_file(filename);
     }
 
-    return 0; /* EXIT_SUCCESS */
+    return EXIT_SUCCESS;
 }
