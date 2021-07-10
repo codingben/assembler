@@ -8,7 +8,7 @@ int parse_line(const char *filename, char *line, int line_index)
     /* TODO: Analyze syntax, and collect error(s) */
     /* TODO: Iterate here to get the column index */
 
-    printf(LOG_FORMAT, filename, line_index, line);
+    printf(LOG_LINE_FORMAT, filename, line_index, line);
     return 0;
 }
 

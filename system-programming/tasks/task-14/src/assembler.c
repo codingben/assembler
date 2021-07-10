@@ -11,7 +11,7 @@ int main(int argument_count, char **argument_vector)
 
     if (argument_count < 2)
     {
-        printf(LOG_FORMAT, filename, __LINE__, NO_FILE_TO_COMPILE);
+        printf(LOG_FORMAT, filename, NO_FILE_TO_COMPILE);
         return EXIT_FAILURE;
     }
 
@@ -25,7 +25,7 @@ int main(int argument_count, char **argument_vector)
 
         if (validate_extension(filename) != 0)
         {
-            printf(LOG_FORMAT, filename, -1, NO_AS_EXTENSION);
+            printf(LOG_FORMAT, filename, NO_AS_EXTENSION);
             continue;
         }
 
