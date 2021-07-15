@@ -31,6 +31,9 @@ int main(int argument_count, char **argument_vector)
 
         /* Analyze syntax and then send to translator */
         parse(filename);
+
+        /* Add space for a new file */
+        printf("\n");
     }
 
     return EXIT_SUCCESS;
