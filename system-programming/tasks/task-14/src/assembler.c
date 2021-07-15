@@ -1,7 +1,8 @@
 #include <stdio.h>
-#include "constants.h"
+#include "rules.h"
+#include "messages.h"
 #include "logger.h"
-#include "utils.h"
+#include "file.h"
 #include "parser.h"
 
 int main(int argument_count, char **argument_vector)
