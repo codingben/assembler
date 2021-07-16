@@ -4,55 +4,61 @@
 
 Line *createLine()
 {
-    Line *new_line = calloc(1, sizeof(Line));
+    Line *line = calloc(1, sizeof(Line));
 
-    if (new_line == NULL)
+    if (line == NULL)
     {
         return NULL;
     }
 
-    new_line->line = malloc(0);
-    new_line->error_message = malloc(0);
-    new_line->next = NULL;
-
-    return new_line;
+    line->line = malloc(0);
+    line->error_message = malloc(0);
+    line->next = NULL;
+    return line;
 }
 
 LinkedLine *createLinkedLine()
 {
-    LinkedLine *list = calloc(1, sizeof(LinkedLine));
+    Line *line;
+    LinkedLine *linked_line = calloc(1, sizeof(LinkedLine));
 
-    if (list == NULL)
+    if (linked_line == NULL)
     {
         return NULL;
     }
 
-    list->head = createLine();
+    line = createLine();
 
-    if (list->head == NULL)
+    if (line == NULL)
     {
         return NULL;
     }
 
-    return list;
+    linked_line->head = line;
+    return linked_line;
 }
 
-void freeLinkedLine(LinkedLine *list)
+void freeLinkedLine(LinkedLine *linked_line)
 {
-    if (list != NULL)
+    Line *current_node;
+    Line *next_node;
+
+    if (linked_line == NULL)
     {
-        Line *node = list->head;
-        Line *next_node = node;
-
-        while (node != NULL)
-        {
-            next_node = node->next;
-
-            free(node);
-
-            node = next_node;
-        }
-
-        free(list);
+        return;
     }
+
+    current_node = linked_line->head;
+    next_node = current_node;
+
+    while (current_node != NULL)
+    {
+        next_node = current_node->next;
+
+        free(current_node);
+
+        current_node = next_node;
+    }
+
+    free(linked_line);
 }
