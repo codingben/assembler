@@ -11,7 +11,7 @@ Line *create_line()
         return NULL;
     }
 
-    line->line = malloc(0);
+    line->text = malloc(0);
     line->error_message = malloc(0);
     line->next = NULL;
     return line;

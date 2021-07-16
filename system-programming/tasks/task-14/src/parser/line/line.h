@@ -3,7 +3,7 @@
 
 typedef struct line
 {
-    char *line;
+    char *text;
     int line_number;
     int has_error;
     char *error_message;

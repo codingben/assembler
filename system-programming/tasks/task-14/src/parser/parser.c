@@ -35,7 +35,7 @@ LinkedLine *parse_buffer(char *buffer)
             Line *new_line = create_line();
 
             /* Copy line buffer to saved line */
-            memcpy(line->line, line_buffer, sizeof(line->line) + 1);
+            memcpy(line->text, line_buffer, sizeof(line->text) + 1);
 
             /* Set line number */
             line->line_number = line_number;
@@ -78,9 +78,9 @@ int analyze(const char *filename, LinkedLine *linked_line)
 
         /* Iterate over saved line (the characters) */
         /* Use it to analyze the characters of the line (e.g. skip ";", etc) */
-        for (i = 0; i < strlen(line->line); ++i)
+        for (i = 0; i < strlen(line->text); ++i)
         {
-            strncat(text, &line->line[i], 1);
+            strncat(text, &line->text[i], 1);
 
             /* TODO: Set has error (true or false) */
             /* TODO: Set error message */
