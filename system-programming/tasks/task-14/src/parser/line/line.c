@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "line.h"
 
-Line *createLine()
+Line *create_line()
 {
     Line *line = calloc(1, sizeof(Line));
 
@@ -17,7 +17,7 @@ Line *createLine()
     return line;
 }
 
-LinkedLine *createLinkedLine()
+LinkedLine *create_linked_line()
 {
     Line *line;
     LinkedLine *linked_line = calloc(1, sizeof(LinkedLine));
@@ -27,7 +27,7 @@ LinkedLine *createLinkedLine()
         return NULL;
     }
 
-    line = createLine();
+    line = create_line();
 
     if (line == NULL)
     {
@@ -38,7 +38,7 @@ LinkedLine *createLinkedLine()
     return linked_line;
 }
 
-void freeLinkedLine(LinkedLine *linked_line)
+void free_linked_line(LinkedLine *linked_line)
 {
     Line *current_node;
     Line *next_node;

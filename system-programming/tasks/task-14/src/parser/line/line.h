@@ -17,10 +17,10 @@ typedef struct linked_line
     Line *head;
 } LinkedLine;
 
-Line *createLine();
+Line *create_line();
 
-LinkedLine *createLinkedLine();
+LinkedLine *create_linked_line();
 
-void freeLinkedLine();
+void free_linked_line();
 
 #endif
