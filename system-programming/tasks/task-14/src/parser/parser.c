@@ -7,33 +7,21 @@
 #include "../constants/rules.h"
 #include "line/line.h"
 
-/* 
- * Data Structure: Line
- * Data Structure implementation: Linked List
- * 
- * line.h
- * linked_line.h
- */
-
-/* File name shouldn't be here */
-int parse_buffer(char *buffer, const char *filename)
+LinkedLine *parse_buffer(char *buffer)
 {
-    /* TODO: Analyze syntax, and collect error(s) */
-    /* TODO: Iterate here to get the column index */
-
-    LinkedLine *line_list = createLinkedLine();
-
-    /*if (line_list == NULL)
-    {
-        return 1;
-    }*/
-
-    Line *current_line = line_list->head;
-    Line *cur_line = line_list->head;
-
-    char line_buffer[MAX_LINE_LENGTH];
-    int line_number = 1;
     int i;
+    int line_number = 1;
+    char line_buffer[MAX_LINE_LENGTH];
+
+    LinkedLine *linked_line = create_linked_line();
+    Line *line;
+
+    if (linked_line == NULL)
+    {
+        return NULL;
+    }
+
+    line = linked_line->head;
 
     for (i = 0; i < strlen(buffer); i++)
     {
@@ -44,19 +32,19 @@ int parse_buffer(char *buffer, const char *filename)
         if (buffer[i] == '\n')
         {
             /* Creates a new line */
-            Line *new_line = createLine();
+            Line *new_line = create_line();
 
             /* Copy line buffer to saved line */
-            memcpy(current_line->line, line_buffer, sizeof(current_line->line) + 1);
+            memcpy(line->line, line_buffer, sizeof(line->line) + 1);
 
             /* Set line number */
-            current_line->line_number = line_number;
+            line->line_number = line_number;
 
             /* Set next new line */
-            current_line->next = new_line;
+            line->next = new_line;
 
             /* Set new line */
-            current_line = new_line;
+            line = new_line;
 
             /* Increment line number */
             line_number++;
@@ -66,18 +54,33 @@ int parse_buffer(char *buffer, const char *filename)
         }
     }
 
+    return linked_line;
+}
+
+int analyze(const char *filename, LinkedLine *linked_line)
+{
+    /* TODO: Analyze syntax, and collect error(s) */
+    /* TODO: Iterate here to get the column index */
+    /* TODO: (Lexer) Break the line into words (e.g. word[0] = 'MOV', word[1] = "$1, *, ...) */
+    /* TODO: (Lexer) Breaking the line can be done with checking for spaces between words. */
+    /* TODO: Get a word like 'MOVAB' then you see that is not equal to 'MOV' (then throw an error) */
+    /* TODO: When got ';' then remove it until reaches '\n' */
+    /* TODO: Remove empty whitespaces? so in case the analyzer won't throw an error for 'MOV' != ' ' empty space */
+
+    Line *line = linked_line->head;
+
     /* Print all saved lines */
     /* Should used for analyzation */
-    for (; cur_line != NULL; cur_line = cur_line->next)
+    for (; line != NULL; line = line->next)
     {
         int i = 0;
         char text[MAX_LINE_LENGTH];
 
         /* Iterate over saved line (the characters) */
         /* Use it to analyze the characters of the line (e.g. skip ";", etc) */
-        for (i = 0; i < strlen(cur_line->line); ++i)
+        for (i = 0; i < strlen(line->line); ++i)
         {
-            strncat(text, &cur_line->line[i], 1);
+            strncat(text, &line->line[i], 1);
 
             /* TODO: Set has error (true or false) */
             /* TODO: Set error message */
@@ -85,17 +88,16 @@ int parse_buffer(char *buffer, const char *filename)
         }
 
         /* Print the line */
-        printf(LOG_LINE_FORMAT, filename, cur_line->line_number, text);
+        printf(LOG_LINE_FORMAT, filename, line->line_number, text);
 
         /* Clear line buffer */
         memset(text, 0, sizeof(text));
     }
 
-    freeLinkedLine(line_list);
     return 0;
 }
 
-int parse_file(FILE *file, const char *filename)
+LinkedLine *parse_file(FILE *file, const char *filename)
 {
     /* Read all the file into a buffer */
     /* Then parse it and on each '\n' character add new line */
@@ -104,6 +106,7 @@ int parse_file(FILE *file, const char *filename)
 
     char *buffer;
     long file_length;
+    LinkedLine *linked_line;
 
     /* Jump to the end of the file */
     fseek(file, 0, SEEK_END);
@@ -121,21 +124,35 @@ int parse_file(FILE *file, const char *filename)
     fread(buffer, file_length, 1, file);
 
     /* Parse the buffer from file */
-    parse_buffer(buffer, filename);
+    linked_line = parse_buffer(buffer);
 
     /* Free buffer from the memory */
     free(buffer);
-    return 0;
+
+    /* Return parsed lines */
+    return linked_line;
 }
 
 int parse(const char *filename)
 {
     FILE *file = fopen(filename, "rb");
+    LinkedLine *linked_line;
 
     if (file != NULL)
     {
         /* Parse file to analyze syntax */
-        parse_file(file, filename);
+        linked_line = parse_file(file, filename);
+
+        if (linked_line == NULL)
+        {
+            return 1;
+        }
+
+        /* Analyze syntax */
+        analyze(filename, linked_line);
+
+        /* Free analyzed lines */
+        free_linked_line(linked_line);
 
         /* Close file after parsing */
         fclose(file);
