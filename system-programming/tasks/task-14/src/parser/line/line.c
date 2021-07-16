@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "line.h"
 
 Line *createLine()
@@ -17,7 +18,7 @@ Line *createLine()
     return new_line;
 }
 
-LinkedLine *createList()
+LinkedLine *createLinkedLine()
 {
     LinkedLine *list = calloc(1, sizeof(LinkedLine));
 

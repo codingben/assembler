@@ -1,9 +1,9 @@
 #include <stdio.h>
-#include "rules.h"
-#include "messages.h"
-#include "logger.h"
-#include "file.h"
-#include "parser.h"
+#include "constants/logger.h"
+#include "constants/messages.h"
+#include "constants/rules.h"
+#include "utils/file.h"
+#include "parser/parser.h"
 
 int main(int argument_count, char **argument_vector)
 {

@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "rules.h"
-#include "messages.h"
-#include "logger.h"
-#include "line.h"
+#include "../constants/logger.h"
+#include "../constants/messages.h"
+#include "../constants/rules.h"
+#include "line/line.h"
 
 /* 
  * Data Structure: Line
@@ -21,7 +21,7 @@ int parse_buffer(char *buffer, const char *filename)
     /* TODO: Analyze syntax, and collect error(s) */
     /* TODO: Iterate here to get the column index */
 
-    LinkedLine *line_list = createList();
+    LinkedLine *line_list = createLinkedLine();
 
     /*if (line_list == NULL)
     {
@@ -91,7 +91,7 @@ int parse_buffer(char *buffer, const char *filename)
         memset(text, 0, sizeof(text));
     }
 
-    freeList(line_list);
+    freeLinkedLine(line_list);
     return 0;
 }
 

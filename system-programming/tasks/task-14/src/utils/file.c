@@ -1,5 +1,5 @@
 #include <string.h>
-#include "rules.h"
+#include "../constants/rules.h"
 
 int validate_extension(const char *filename)
 {
