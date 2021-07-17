@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "../../constants/rules.h"
 #include "line.h"
 
 Line *create_line()
@@ -11,8 +12,8 @@ Line *create_line()
         return NULL;
     }
 
-    line->text = malloc(0);
-    line->error_message = malloc(0);
+    line->text = malloc(MAX_LINE_LENGTH);
+    line->error_message = malloc(0); /* TODO: Set error message size */
     line->next = NULL;
     return line;
 }
@@ -55,6 +56,8 @@ void free_linked_line(LinkedLine *linked_line)
     {
         next_node = current_node->next;
 
+        free(current_node->text);
+        free(current_node->error_message);
         free(current_node);
 
         current_node = next_node;

@@ -11,7 +11,6 @@ LinkedLine *parse_buffer(char *buffer)
 {
     int i;
     int line_number = 1;
-    char line_buffer[MAX_LINE_LENGTH];
 
     LinkedLine *linked_line = create_linked_line();
     Line *line;
@@ -26,31 +25,22 @@ LinkedLine *parse_buffer(char *buffer)
     for (i = 0; i < strlen(buffer); i++)
     {
         /* Add characters to the line */
-        strncat(line_buffer, &buffer[i], 1);
+        strncat(line->text, &buffer[i], 1);
+
+        /* TODO: When will happen when you reach the end of the line_buffer? */
+        /* TODO: Raise an error saying no more than 80 characters allowed? */
 
         /* If line end is reached, then save it and reset it */
         if (buffer[i] == '\n')
         {
-            /* Creates a new line */
             Line *new_line = create_line();
-
-            /* Copy line buffer to saved line */
-            memcpy(line->text, line_buffer, sizeof(line->text) + 1);
-
-            /* Set line number */
             line->line_number = line_number;
-
-            /* Set next new line */
             line->next = new_line;
-
-            /* Set new line */
             line = new_line;
 
-            /* Increment line number */
-            line_number++;
+            line_number = line_number + 1;
 
-            /* Clear line buffer */
-            memset(line_buffer, 0, sizeof(line_buffer) + 1);
+            /* It works, but when there's '\n' (empty line) and it's not called therefore you get 0 by default */
         }
     }
 
@@ -68,30 +58,23 @@ int analyze(const char *filename, LinkedLine *linked_line)
     /* TODO: Remove empty whitespaces? so in case the analyzer won't throw an error for 'MOV' != ' ' empty space */
 
     Line *line = linked_line->head;
+    int i = 0;
 
     /* Print all saved lines */
     /* Should used for analyzation */
     for (; line != NULL; line = line->next)
     {
-        int i = 0;
-        char text[MAX_LINE_LENGTH];
-
         /* Iterate over saved line (the characters) */
         /* Use it to analyze the characters of the line (e.g. skip ";", etc) */
         for (i = 0; i < strlen(line->text); ++i)
         {
-            strncat(text, &line->text[i], 1);
-
             /* TODO: Set has error (true or false) */
             /* TODO: Set error message */
             /* TODO: Set error column (error_column = i) */
         }
 
         /* Print the line */
-        printf(LOG_LINE_FORMAT, filename, line->line_number, text);
-
-        /* Clear line buffer */
-        memset(text, 0, sizeof(text));
+        printf(LOG_LINE_FORMAT, filename, line->line_number, line->text);
     }
 
     return 0;
