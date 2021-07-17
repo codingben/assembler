@@ -22,7 +22,9 @@ LinkedLine *parse_buffer(char *buffer)
 
     line = linked_line->head;
 
-    for (i = 0; i < strlen(buffer); i++)
+    /* The "... + 1" is used for the last character of the line */
+    /* NOTE: strlen will return only the characters and not all the size */
+    for (i = 0; i < strlen(buffer) + 1; i++)
     {
         /* Add characters to the line */
         strncat(line->text, &buffer[i], 1);
@@ -41,6 +43,10 @@ LinkedLine *parse_buffer(char *buffer)
             line_number = line_number + 1;
 
             /* It works, but when there's '\n' (empty line) and it's not called therefore you get 0 by default */
+        }
+        else /* This will happen in case '\n' not reached */
+        {
+            line->line_number = line_number;
         }
     }
 
