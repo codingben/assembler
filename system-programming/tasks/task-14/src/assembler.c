@@ -12,7 +12,8 @@ int main(int argument_count, char **argument_vector)
 
     if (argument_count < 2)
     {
-        printf(LOG_FORMAT, filename, NO_FILE_TO_COMPILE);
+        printf(NO_FILE_TO_COMPILE);
+        printf("#---------------------------------------------------#\n");
         return EXIT_FAILURE;
     }
 
@@ -26,7 +27,8 @@ int main(int argument_count, char **argument_vector)
 
         if (validate_extension(filename) != 0)
         {
-            printf(LOG_FORMAT, filename, NO_AS_EXTENSION);
+            printf(ERROR_FORMAT, filename, NO_AS_EXTENSION);
+            printf("#---------------------------------------------------#\n");
             continue;
         }
 
@@ -34,7 +36,7 @@ int main(int argument_count, char **argument_vector)
         parse(filename);
 
         /* Add space for a new file */
-        printf("\n");
+        printf("\n#---------------------------------------------------#\n");
     }
 
     return EXIT_SUCCESS;
