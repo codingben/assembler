@@ -148,7 +148,8 @@ int parse(const char *filename)
     }
     else
     {
-        perror(FAILED_OPEN_FILE);
+        /* TODO: Use perror(...) later */
+        printf(FAILED_OPEN_FILE);
     }
 
     return 0;
