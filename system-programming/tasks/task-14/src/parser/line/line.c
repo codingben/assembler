@@ -5,15 +5,13 @@
 
 Line *create_line()
 {
-    Line *line = calloc(1, sizeof(Line));
+    Line *line = malloc(sizeof(Line));
 
     if (line == NULL)
     {
         return NULL;
     }
 
-    line->text = malloc(MAX_LINE_LENGTH);
-    line->error_message = malloc(0); /* TODO: Set error message size */
     line->next = NULL;
     return line;
 }
@@ -21,7 +19,7 @@ Line *create_line()
 LinkedLine *create_linked_line()
 {
     Line *line;
-    LinkedLine *linked_line = calloc(1, sizeof(LinkedLine));
+    LinkedLine *linked_line = malloc(sizeof(LinkedLine));
 
     if (linked_line == NULL)
     {
@@ -56,8 +54,16 @@ void free_linked_line(LinkedLine *linked_line)
     {
         next_node = current_node->next;
 
-        free(current_node->text);
-        free(current_node->error_message);
+        if (current_node->text != NULL)
+        {
+            free(current_node->text);
+        }
+
+        if (current_node->error_message != NULL)
+        {
+            free(current_node->error_message);
+        }
+
         free(current_node);
 
         current_node = next_node;
