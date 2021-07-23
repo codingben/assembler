@@ -1,5 +1,6 @@
 #include <string.h>
-#include "../constants/rules.h"
+
+#define ASSEMBLY_EXTENSION ".as"
 
 int validate_extension(const char *filename)
 {
