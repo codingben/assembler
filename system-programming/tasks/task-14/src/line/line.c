@@ -1,6 +1,4 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include "../../constants/rules.h"
 #include "line.h"
 
 Line *create_line()
@@ -18,7 +16,6 @@ Line *create_line()
 
 LinkedLine *create_linked_line()
 {
-    Line *line;
     LinkedLine *linked_line = malloc(sizeof(LinkedLine));
 
     if (linked_line == NULL)
@@ -26,18 +23,37 @@ LinkedLine *create_linked_line()
         return NULL;
     }
 
-    line = create_line();
-
-    if (line == NULL)
-    {
-        return NULL;
-    }
-
-    linked_line->head = line;
+    linked_line->head = NULL;
     return linked_line;
 }
 
-void free_linked_line(LinkedLine *linked_line)
+Line *add_line(LinkedLine *linked_line)
+{
+    Line *line = NULL;
+
+    if (linked_line->head == NULL)
+    {
+        line = create_line();
+
+        linked_line->head = line;
+    }
+    else
+    {
+        line = linked_line->head;
+
+        while (line->next != NULL)
+        {
+            line = line->next;
+        }
+
+        line->next = create_line();
+        line = line->next;
+    }
+
+    return line;
+}
+
+void delete_linked_line(LinkedLine *linked_line)
 {
     Line *current_node;
     Line *next_node;
@@ -53,16 +69,6 @@ void free_linked_line(LinkedLine *linked_line)
     while (current_node != NULL)
     {
         next_node = current_node->next;
-
-        if (current_node->text != NULL)
-        {
-            free(current_node->text);
-        }
-
-        if (current_node->error_message != NULL)
-        {
-            free(current_node->error_message);
-        }
 
         free(current_node);
 
