@@ -33,20 +33,27 @@ Line *add_line(LinkedLine *linked_line)
 
     if (linked_line->head == NULL)
     {
+        /* Create new line to set to the head. */
         line = create_line();
 
+        /* Set the new line to the head. */
         linked_line->head = line;
     }
     else
     {
+        /* Get the line from the first one. */
         line = linked_line->head;
 
+        /* Iterate until the end line is reached. */
         while (line->next != NULL)
         {
             line = line->next;
         }
 
+        /* Set the new line to the end of the linked list. */
         line->next = create_line();
+
+        /* Set the new line to return it. */
         line = line->next;
     }
 
@@ -66,6 +73,7 @@ void delete_linked_line(LinkedLine *linked_line)
     current_node = linked_line->head;
     next_node = current_node;
 
+    /* Iterate until the end of linked list is reached. */
     while (current_node != NULL)
     {
         next_node = current_node->next;

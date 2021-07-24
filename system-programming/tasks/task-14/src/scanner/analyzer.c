@@ -23,24 +23,27 @@ LinkedLine *analyze(const char *file_name)
 
     if (linked_line == NULL)
     {
-        /* Add error message here */
+        /* Add error message here. */
         return NULL;
     }
 
-    /* Analyze the assembly file for syntax parsing */
+    /* Analyze the assembly file for syntax parsing. */
     while (fgets(text, ASM_MAX_LINE_LENGTH, file) != NULL)
     {
+        /* Add the new line to the linked lines. */
         Line *line = add_line(linked_line);
 
+        /* Copy line text from the file to the new line. */
         memcpy(line->text, text, strlen(text) + 1);
 
+        /* Set the line number of the copied line. */
         line->line_number = line_number;
         line_number++;
     }
 
-    /* Close file after parsing */
+    /* Close file after analyzing. */
     fclose(file);
 
-    /* Linked lines for syntax parsing */
+    /* Linked lines for syntax parsing. */
     return linked_line;
 }

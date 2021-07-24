@@ -7,12 +7,14 @@
 
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
+#define DEFAULT_ARG_COUNT 2
 
 int main(int argument_count, char **argument_vector)
 {
     int i;
 
-    if (argument_count < 2)
+    /* Check the number of passed arguments. */
+    if (argument_count < DEFAULT_ARG_COUNT)
     {
         printf(NO_FILE_TO_COMPILE);
         printf("#---------------------------------------------------#\n");
@@ -31,6 +33,7 @@ int main(int argument_count, char **argument_vector)
          * 4. if (compiled) build 
          */
 
+        /* Check if the assembly file has ".as" extension. */
         if (validate_extension(file_name) != 0)
         {
             printf(ERROR_FORMAT, file_name, NO_AS_EXTENSION);
@@ -38,22 +41,22 @@ int main(int argument_count, char **argument_vector)
             continue;
         }
 
-        /* Scanner analysis */
+        /* Reading the assembly source code. */
         linked_line = analyze(file_name);
 
         if (linked_line == NULL)
         {
-            /* TODO: Add error message here */
+            /* TODO: Add error message here. */
             continue;
         }
 
-        /* Syntax parsing */
+        /* Syntax parsing. */
         parse(file_name, linked_line);
 
-        /* Free saved lines */
+        /* Free saved lines. */
         delete_linked_line(linked_line);
 
-        /* Add space for a new file */
+        /* Add space for a new file. */
         printf("#---------------------------------------------------#\n");
     }
 
