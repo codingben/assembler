@@ -11,8 +11,6 @@
 int main(int argument_count, char **argument_vector)
 {
     int i;
-    const char *file_name = argument_vector[0];
-    LinkedLine *linked_line;
 
     if (argument_count < 2)
     {
@@ -23,7 +21,8 @@ int main(int argument_count, char **argument_vector)
 
     for (i = 1; i < argument_count; ++i)
     {
-        file_name = argument_vector[i];
+        const char *file_name = argument_vector[i];
+        LinkedLine *linked_line;
 
         /* Steps:
          * 1. if (validated) analyze (scanner)
