@@ -17,7 +17,6 @@ int main(int argument_count, char **argument_vector)
     if (argument_count < DEFAULT_ARG_COUNT)
     {
         printf(NO_FILE_TO_COMPILE);
-        printf("#---------------------------------------------------#\n");
         return EXIT_FAILURE;
     }
 
@@ -37,7 +36,6 @@ int main(int argument_count, char **argument_vector)
         if (validate_extension(file_name) != 0)
         {
             printf(ERROR_FORMAT, file_name, NO_AS_EXTENSION);
-            printf("#---------------------------------------------------#\n");
             continue;
         }
 
@@ -55,9 +53,6 @@ int main(int argument_count, char **argument_vector)
 
         /* Free saved lines. */
         delete_linked_line(linked_line);
-
-        /* Add space for a new file. */
-        printf("#---------------------------------------------------#\n");
     }
 
     return EXIT_SUCCESS;
