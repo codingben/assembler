@@ -44,7 +44,7 @@ int main(int argument_count, char **argument_vector)
 
         if (linked_line == NULL)
         {
-            /* TODO: Add error message here. */
+            printf(ERROR_FORMAT, file_name, FAILED_ANALYZE_FILE);
             continue;
         }
 
