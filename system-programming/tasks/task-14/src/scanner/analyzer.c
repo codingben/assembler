@@ -15,7 +15,6 @@ LinkedLine *analyze(const char *file_name)
 
     if (file == NULL)
     {
-        printf(FAILED_OPEN_FILE);
         return NULL;
     }
 
@@ -23,7 +22,6 @@ LinkedLine *analyze(const char *file_name)
 
     if (linked_line == NULL)
     {
-        /* Add error message here. */
         return NULL;
     }
 
