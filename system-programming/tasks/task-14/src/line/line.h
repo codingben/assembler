@@ -4,6 +4,14 @@
 #define ASM_MAX_LINE_LENGTH 81 /* The last character is '\n' */
 #define ERROR_MAX_LINE_LENGTH 120
 
+typedef enum
+{
+    EMPTY,
+    COMMENT,
+    COMMAND,
+    DIRECTIVE
+} statement_type;
+
 typedef struct line
 {
     char text[ASM_MAX_LINE_LENGTH];
@@ -11,6 +19,7 @@ typedef struct line
     int has_error;
     char error_message[ERROR_MAX_LINE_LENGTH];
     int error_column;
+    statement_type statement_type;
     struct line *next;
     /* TODO: error list (message, column). but, one error is enough */
 } Line;
@@ -27,5 +36,7 @@ LinkedLine *create_linked_line();
 Line *add_line(LinkedLine *linked_line);
 
 void delete_linked_line(LinkedLine *linked_line);
+
+char *copy_line(Line *line);
 
 #endif
