@@ -15,8 +15,6 @@ void parse(const char *file_name, LinkedLine *linked_line)
     /* One error for each line is enough */
 
     Line *line = linked_line->head;
-
-    int result = 0;
     int i = 0;
 
     /* Should used for parsing */
@@ -31,16 +29,16 @@ void parse(const char *file_name, LinkedLine *linked_line)
             /* TODO: Set error column (error_column = i) */
         }
 
-        result = parse_line(line);
-
-        if (result == 1)
+        if (parse_line(line) == 1)
         {
+            /* Print errors here (if have) */
             continue;
         }
 
         /* TODO: Collect errors before encoding to machine code */
+        /* printf(LOG_LINE_FORMAT, file_name, line->line_number, line->text); */
 
-        printf(LOG_LINE_FORMAT, file_name, line->line_number, line->text);
+        printf("Command: %s\n", line->command);
     }
 }
 
@@ -55,7 +53,8 @@ int parse_line(Line *line)
     /* TODO: Remove empty whitespaces? so in case the parser won't throw an error for 'MOV' != ' ' empty space */
 
     const char delim[1] = " ";
-    char *token = strtok(copy_line(line), delim);
+    char *copied_line = copy_line(line);
+    char *token = strtok(copied_line, delim);
 
     while (token != NULL)
     {
@@ -71,18 +70,56 @@ int parse_line(Line *line)
             return 1;
         }
 
-        /* TODO: Add symbol table, what is IC? *
+        /* TODO: Check for entry or extern */
+
+        if (is_label(token) == 1)
+        {
+            if (is_label_above_max_length(token) == 1)
+            {
+                /* TODO: Add error here */
+                return 1;
+            }
+
+            if (is_label_equals_command(token) == 0)
+            {
+                /* TODO: Add error here */
+                return 1;
+            }
+
+            if (is_label_equals_directive(token) == 0)
+            {
+                /* TODO: Add error here */
+                return 1;
+            }
+
+            memcpy(line->label, token, strlen(token) + 1);
+        }
+        else
+        {
+            if (is_command(token) == 0)
+            {
+                memcpy(line->command, token, strlen(token) + 1);
+            }
+            else if (is_directive(token) == 0)
+            {
+                memcpy(line->directive, token, strlen(token) + 1);
+            }
+            else
+            {
+                /* TODO: Add error here, "invalid syntax" */
+            }
+        }
+
+        /* TODO: Add symbol table, what is IC? */
         /* TODO: Set other statement type */
-        /* TODO: Set label */
         /* TODO: Set directive or command */
         /* TODO: Set registers */
-        /* TODO: Make sure label has ":" and is no more than 31 characters ('\n' including) */
-        /* TODO: The char ":" used to know the end of the label */
-        /* TODO: After that, make sure label isn't command name or directive name */
         /* TODO: Check directives/commands and collect errors */
+        /* TODO: Make better return types, no 0 or 1 */
 
         token = strtok(NULL, delim);
     }
 
+    free(copied_line);
     return 0;
 }
