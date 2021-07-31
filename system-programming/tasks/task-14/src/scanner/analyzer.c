@@ -30,9 +30,10 @@ LinkedLine *analyze(const char *file_name)
     {
         /* Add the new line to the linked lines. */
         Line *line = add_line(linked_line);
+        int length = strlen(text) + 1;
 
         /* Copy line text from the file to the new line. */
-        memcpy(line->text, text, strlen(text) + 1);
+        memcpy(line->text, text, length);
 
         /* Set the line number of the copied line. */
         line->line_number = line_number;
