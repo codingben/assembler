@@ -72,6 +72,8 @@ int parse_line(Line *line)
 
         /* TODO: Check for entry or extern */
 
+        remove_null_characters(token);
+
         if (is_label(token) == 1)
         {
             if (is_label_above_max_length(token) == 1)
