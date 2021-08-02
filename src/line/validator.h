@@ -17,4 +17,6 @@ int is_command(char *value);
 
 int is_directive(char *value);
 
+void remove_null_characters(char *value);
+
 #endif
