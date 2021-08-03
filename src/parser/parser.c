@@ -101,10 +101,14 @@ int parse_line(Line *line)
         {
             if (is_command(token) == 0)
             {
+                line->statement_type = COMMAND;
+
                 memcpy(line->command, token, strlen(token) + 1);
             }
             else if (is_directive(token) == 0)
             {
+                line->statement_type = DIRECTIVE;
+
                 memcpy(line->directive, token, strlen(token) + 1);
             }
             else
@@ -114,7 +118,6 @@ int parse_line(Line *line)
         }
 
         /* TODO: Add symbol table, what is IC? */
-        /* TODO: Set other statement type */
         /* TODO: Set registers */
         /* TODO: Check directives/commands and collect errors */
         /* TODO: Make better return types, no 0 or 1 */
