@@ -115,7 +115,6 @@ int parse_line(Line *line)
 
         /* TODO: Add symbol table, what is IC? */
         /* TODO: Set other statement type */
-        /* TODO: Set directive or command */
         /* TODO: Set registers */
         /* TODO: Check directives/commands and collect errors */
         /* TODO: Make better return types, no 0 or 1 */
