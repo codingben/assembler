@@ -120,7 +120,7 @@ int is_directive(char *value)
     return result;
 }
 
-void remove_null_characters(char *value)
+void remove_new_line_character(char *value)
 {
     int i = 0;
 

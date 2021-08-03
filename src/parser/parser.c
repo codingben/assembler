@@ -72,7 +72,8 @@ int parse_line(Line *line)
 
         /* TODO: Check for entry or extern */
 
-        remove_null_characters(token);
+        /* Remove '\n' from lines like: "END: stop\n" */
+        remove_new_line_character(token);
 
         if (is_label(token) == 1)
         {
