@@ -20,15 +20,6 @@ void parse(const char *file_name, LinkedLine *linked_line)
     /* Should used for parsing */
     for (; line != NULL; line = line->next)
     {
-        /* Iterate over saved line (the characters) */
-        /* Use it to analyze the characters of the line (e.g. skip ";", etc) */
-        for (i = 0; i < strlen(line->text) + 1; ++i)
-        {
-            /* TODO: Set has error (true or false) */
-            /* TODO: Set error message */
-            /* TODO: Set error column (error_column = i) */
-        }
-
         if (parse_line(line) == 1)
         {
             /* Print errors here (if have) */
@@ -45,7 +36,6 @@ void parse(const char *file_name, LinkedLine *linked_line)
 int parse_line(Line *line)
 {
     /* TODO: Parse syntax, and collect error(s) */
-    /* TODO: Iterate here to get the column index */
     /* TODO: (Lexer) Break the line into words (e.g. word[0] = 'MOV', word[1] = "$1, *, ...) */
     /* TODO: (Lexer) Breaking the line can be done with checking for spaces between words. */
     /* TODO: Get a word like 'MOVAB' then you see that is not equal to 'MOV' (then throw an error) */
@@ -120,7 +110,6 @@ int parse_line(Line *line)
 
         /* TODO: Add symbol table, what is IC? */
         /* TODO: Set registers */
-        /* TODO: Check directives/commands and collect errors */
         /* TODO: Make better return types, no 0 or 1 */
 
         token = strtok(NULL, delim);

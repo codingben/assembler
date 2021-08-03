@@ -70,7 +70,6 @@ typedef struct line
     int line_number;
     int has_error;
     char error_message[ERROR_MAX_LINE_LENGTH];
-    int error_column;
     statement_type statement_type;
     char label[MAX_LABEL_LENGTH];
     char command[MAX_COMMAND_LENGTH];
