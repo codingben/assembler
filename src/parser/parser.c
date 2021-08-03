@@ -11,13 +11,16 @@ int parse_line(Line *line);
 void parse(const char *file_name, LinkedLine *linked_line)
 {
     Line *line = linked_line->head;
-    int i = 0;
 
     for (; line != NULL; line = line->next)
     {
         if (parse_line(line) == 1)
         {
-            /* Print errors here (if have) */
+            if (line->has_error == 1)
+            {
+                printf(ERROR_LINE_FORMAT, file_name, line->line_number, line->error_message);
+            }
+
             continue;
         }
 
@@ -30,7 +33,7 @@ int parse_line(Line *line)
     /* TODO: Parse syntax, and collect error(s) */
     /* TODO: Check for entry or extern to create output files */
     /* TODO: Add symbol table, what is IC? */
-    /* TODO: Set registers */
+    /* TODO: Detect and set registers */
     /* TODO: Make better return types, no 0 or 1 */
 
     /* Breaking this line into words (tokens). */
@@ -59,19 +62,22 @@ int parse_line(Line *line)
         {
             if (is_label_above_max_length(token) == 1)
             {
-                /* TODO: Add error here */
+                line->has_error = 1;
+                strcpy(line->error_message, MAX_LENGTH_LABEL);
                 return 1;
             }
 
             if (is_label_equals_command(token) == 0)
             {
-                /* TODO: Add error here */
+                line->has_error = 1;
+                strcpy(line->error_message, MAX_EQUALS_COMMAND);
                 return 1;
             }
 
             if (is_label_equals_directive(token) == 0)
             {
-                /* TODO: Add error here */
+                line->has_error = 1;
+                strcpy(line->error_message, MAX_EQUALS_DIRECTIVE);
                 return 1;
             }
 
@@ -82,18 +88,20 @@ int parse_line(Line *line)
             if (is_command(token) == 0)
             {
                 line->statement_type = COMMAND;
-
                 memcpy(line->command, token, strlen(token) + 1);
             }
             else if (is_directive(token) == 0)
             {
                 line->statement_type = DIRECTIVE;
-
                 memcpy(line->directive, token, strlen(token) + 1);
             }
             else
             {
-                /* TODO: Add error here, "invalid syntax" */
+                printf("%s\n", token);
+
+                line->has_error = 1;
+                strcpy(line->error_message, EXPECTED_CMD_OR_DIR);
+                return 1;
             }
         }
 
