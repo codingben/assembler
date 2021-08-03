@@ -75,7 +75,6 @@ typedef struct line
     char command[MAX_COMMAND_LENGTH];
     char directive[MAX_DIRECTIVE_LENGTH];
     struct line *next;
-    /* TODO: error list (message, column). but, one error is enough */
 } Line;
 
 typedef struct linked_line
