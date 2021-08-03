@@ -52,6 +52,7 @@ int parse_line(Line *line)
     /* TODO: When got ';' then remove it until reaches '\n' */
     /* TODO: Remove empty whitespaces? so in case the parser won't throw an error for 'MOV' != ' ' empty space */
 
+    /* Breaking this line into words (tokens). */
     const char delim[1] = " ";
     char *copied_line = copy_line(line);
     char *token = strtok(copied_line, delim);
