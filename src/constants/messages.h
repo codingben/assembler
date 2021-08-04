@@ -7,6 +7,6 @@
 #define MAX_LENGTH_LABEL "label length has reached its limit.\n"
 #define MAX_EQUALS_COMMAND "label cannot be command.\n"
 #define MAX_EQUALS_DIRECTIVE "label cannot be directive.\n"
-#define EXPECTED_CMD_OR_DIR "invalid syntax, expected command or directive.\n"
+#define INVALID_DEFINITION "unrecognized definiton: %s\n"
 
 #endif

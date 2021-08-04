@@ -97,10 +97,8 @@ int parse_line(Line *line)
             }
             else
             {
-                printf("%s\n", token);
-
                 line->has_error = 1;
-                strcpy(line->error_message, EXPECTED_CMD_OR_DIR);
+                sprintf(line->error_message, INVALID_DEFINITION, token);
                 return 1;
             }
         }
