@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "constants/logger.h"
 #include "constants/messages.h"
-#include "utils/file.h"
+#include "utils/file_helper.h"
 #include "scanner/analyzer.h"
 #include "parser/parser.h"
 
