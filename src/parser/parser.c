@@ -5,6 +5,7 @@
 #include "../constants/messages.h"
 #include "../line/line.h"
 #include "../line/validator.h"
+#include "../utils/line_helper.h"
 
 int parse_line(Line *line);
 
