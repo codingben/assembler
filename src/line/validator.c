@@ -119,3 +119,8 @@ int is_directive(char *value)
 
     return result;
 }
+
+int is_register(char *value)
+{
+    return value[0] == '$';
+}
