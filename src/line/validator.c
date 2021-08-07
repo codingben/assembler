@@ -124,3 +124,17 @@ int is_register(char *value)
 {
     return value[0] == '$';
 }
+
+int is_number(char *value)
+{
+    char *result = NULL;
+
+    strtol(value, &result, 0);
+
+    if (result == NULL)
+    {
+        return 0;
+    }
+
+    return *result == (char)0;
+}

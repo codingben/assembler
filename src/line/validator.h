@@ -19,4 +19,6 @@ int is_directive(char *value);
 
 int is_register(char *value);
 
+int is_number(char *value);
+
 #endif
