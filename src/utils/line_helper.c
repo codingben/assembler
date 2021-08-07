@@ -17,17 +17,18 @@ char *duplicate(char *value)
 
 void remove_whitespaces(char *value)
 {
-    char *temp;
+    int i = 0;
+    int count = 0;
 
-    for (temp = value; *temp; ++temp)
+    for (i = 0; value[i]; i++)
     {
-        if (*temp != ' ')
+        if (value[i] != ' ')
         {
-            *value++ = *temp;
+            value[count++] = value[i];
         }
     }
 
-    *value = 0;
+    value[count] = 0;
 }
 
 void remove_new_line_character(char *value)
