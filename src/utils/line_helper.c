@@ -15,6 +15,21 @@ char *duplicate(char *value)
     return new_line;
 }
 
+void remove_whitespaces(char *value)
+{
+    char *temp;
+
+    for (temp = value; *temp; ++temp)
+    {
+        if (*temp != ' ')
+        {
+            *value++ = *temp;
+        }
+    }
+
+    *value = 0;
+}
+
 void remove_new_line_character(char *value)
 {
     int i = 0;

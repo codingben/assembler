@@ -3,6 +3,8 @@
 
 char *duplicate(char *value);
 
+void remove_whitespaces(char *value);
+
 void remove_new_line_character(char *value);
 
 #endif
