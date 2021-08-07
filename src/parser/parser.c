@@ -38,9 +38,9 @@ int parse_line(Line *line)
     /* TODO: Make better return types, no 0 or 1 */
 
     /* Breaking this line into words (tokens). */
-    const char delim[1] = " ";
-    char *copied_line = copy_line(line);
-    char *token = strtok(copied_line, delim);
+    char delimeter[] = " ,";
+    char *duplicated_line = duplicate(line->text);
+    char *token = strtok(duplicated_line, delimeter);
 
     while (token != NULL)
     {
@@ -88,25 +88,82 @@ int parse_line(Line *line)
         {
             if (is_command(token) == 0)
             {
+                /* TODO: Call it "operation code (opcode)" */
+
                 line->statement_type = COMMAND;
                 memcpy(line->command, token, strlen(token) + 1);
             }
             else if (is_directive(token) == 0)
             {
+                /* TODO: Check if it's a number or "string" */
+
                 line->statement_type = DIRECTIVE;
                 memcpy(line->directive, token, strlen(token) + 1);
             }
             else
             {
-                line->has_error = 1;
-                sprintf(line->error_message, INVALID_DEFINITION, token);
-                return 1;
+                /* TOOD: Check if this line is the command statement type */
+                /* TODO: Parse the operands */
+                /* TODO: If not, print an error */
+                /* TODO: Make a table of $0, ..., $31 registers */
+                /* TODO: If you have: $1$2 then get_register won't work and throw an error :) */
+                /* TODO: Do ALL the checks here based if it's a command line or directive */
+                /* TODO: because the checks will be different for each type (e.g. directives has no registers) */
+
+                /* TODO: Check that it's not label, command and not directive -> to get into operands :) */
+
+                /* TODO: Remove whitespaces from operands if found */
+                /* TODO: Use symbol table to see what labels defined */
+                /* TODO: Check if the operand is a label */
+                /* TODO: Check if the operand is a "string" */
+
+                /* TODO: In case of "$ 1" or " $1" just remove whitespaces */
+                /* TODO: In case of "$ 1" the previous strtok will split it to "$" and "1" */
+                /* TODO: do you handle ^ case? */
+
+                if (line->statement_type == COMMAND)
+                {
+                    /* TODO: Check if it's a number, use isdigit */
+
+                    if (is_register(token) == 1 || is_number(token))
+                    {
+                        /* TODO: Check if it's register by also see if it's in $0, ... $31 table */
+                        /* TODO: Check if it's register -> then get_register and insert it (so you won't pass $100) */
+                        /* TODO: If it's not a register, check if it's number or label name or by .extern */
+
+                        printf("Command: %s\n", token);
+                    }
+                    else
+                    {
+                        line->has_error = 1;
+                        sprintf(line->error_message, INVALID_DEFINITION, token);
+                        return 1;
+                    }
+                }
+                else if (line->statement_type == DIRECTIVE)
+                {
+                    /* TODO: Check if it's a number, use isdigit */
+
+                    if (is_number(token))
+                    {
+                        printf("Directive: %s\n", token);
+                    }
+                    else
+                    {
+                        line->has_error = 1;
+                        sprintf(line->error_message, INVALID_DEFINITION, token);
+                        return 1;
+                    }
+                }
+
+                /* line->has_error = 1;
+                sprintf(line->error_message, INVALID_DEFINITION, token); */
             }
         }
 
-        token = strtok(NULL, delim);
+        token = strtok(NULL, delimeter);
     }
 
-    free(copied_line);
+    free(duplicated_line);
     return 0;
 }
