@@ -131,6 +131,4 @@ Line *add_line(LinkedLine *linked_line);
 
 void delete_linked_line(LinkedLine *linked_line);
 
-char *copy_line(Line *line);
-
 #endif

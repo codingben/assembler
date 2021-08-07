@@ -86,17 +86,3 @@ void delete_linked_line(LinkedLine *linked_line)
 
     free(linked_line);
 }
-
-char *copy_line(Line *line)
-{
-    int length = strlen(line->text) + 1;
-    char *new_line = malloc((length) * sizeof(char));
-
-    if (new_line == NULL)
-    {
-        return 0;
-    }
-
-    memcpy(new_line, line->text, length);
-    return new_line;
-}
