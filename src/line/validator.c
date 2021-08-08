@@ -5,42 +5,22 @@
 
 int is_empty_line(char value)
 {
-    if (value == '\n')
-    {
-        return TRUE;
-    }
-
-    return FALSE;
+    return value == '\n' ? TRUE : FALSE;
 }
 
 int is_comment_line(char value)
 {
-    if (value == ';')
-    {
-        return TRUE;
-    }
-
-    return FALSE;
+    return value == ';' ? TRUE : FALSE;
 }
 
 int is_label(char *value)
 {
-    if (value[strlen(value) - 1] == ':')
-    {
-        return TRUE;
-    }
-
-    return FALSE;
+    return value[strlen(value) - 1] == ':' ? TRUE : FALSE;
 }
 
 int is_label_above_max_length(char *value)
 {
-    if (strlen(value) > MAX_LABEL_LENGTH)
-    {
-        return TRUE;
-    }
-
-    return FALSE;
+    return strlen(value) > MAX_LABEL_LENGTH ? TRUE : FALSE;
 }
 
 /* DRY: Make generic function similar to is_label_equals_directive(). */
@@ -131,12 +111,7 @@ int is_directive(char *value)
 
 int is_register(char *value)
 {
-    if (value[0] == '$')
-    {
-        return TRUE;
-    }
-
-    return FALSE;
+    return value[0] == '$' ? TRUE : FALSE;
 }
 
 int is_number(char *value)
