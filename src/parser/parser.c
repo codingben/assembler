@@ -125,13 +125,28 @@ int parse_line(Line *line)
                 {
                     /* TODO: Check if it's a number, use isdigit */
 
-                    if (is_register(token) == 1 || is_number(token))
+                    if (is_register(token) == 1)
                     {
                         /* TODO: Check if it's register by also see if it's in $0, ... $31 table */
                         /* TODO: Check if it's register -> then get_register and insert it (so you won't pass $100) */
+                        /* TODO: If the token is "$ 9" then it will not get register "$" */
+                        /* TODO: So throw an error and stop processing the line */
                         /* TODO: If it's not a register, check if it's number or label name or by .extern */
 
-                        printf("Command: %s\n", token);
+                        if (is_register_exists(token) == 0)
+                        {
+                            printf("Command: %s\n", token);
+                        }
+                        else
+                        {
+                            line->has_error = 1;
+                            sprintf(line->error_message, INVALID_DEFINITION, token);
+                            return 1;
+                        }
+                    }
+                    else if (is_number(token))
+                    {
+                        /* TODO: What need to check here? */
                     }
                     else
                     {
