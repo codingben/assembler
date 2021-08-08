@@ -10,6 +10,10 @@
 
 int parse_line(Line *line);
 
+int validate_label(Line *line, char *label);
+
+int parse_operands(Line *line, char *operand);
+
 void parse(const char *file_name, LinkedLine *linked_line)
 {
     Line *line = linked_line->head;
@@ -28,13 +32,13 @@ void parse(const char *file_name, LinkedLine *linked_line)
     }
 }
 
+/* TODO: Make the return type better of this function */
 int parse_line(Line *line)
 {
     /* TODO: Parse syntax, and collect error(s) */
     /* TODO: Check for entry or extern to create output files */
     /* TODO: Add symbol table, what is IC? */
     /* TODO: Detect and set registers */
-    /* TODO: Make better return types, no 0 or 1 */
 
     /* Breaking this line into words (tokens). */
     char delimeter[] = " ,";
@@ -60,24 +64,8 @@ int parse_line(Line *line)
 
         if (is_label(token))
         {
-            if (is_label_above_max_length(token))
+            if (validate_label(line, token) == FALSE)
             {
-                line->has_error = TRUE;
-                strcpy(line->error_message, MAX_LENGTH_LABEL);
-                return TRUE;
-            }
-
-            if (is_label_equals_command(token))
-            {
-                line->has_error = TRUE;
-                strcpy(line->error_message, MAX_EQUALS_COMMAND);
-                return TRUE;
-            }
-
-            if (is_label_equals_directive(token))
-            {
-                line->has_error = TRUE;
-                strcpy(line->error_message, MAX_EQUALS_DIRECTIVE);
                 return TRUE;
             }
 
@@ -101,54 +89,9 @@ int parse_line(Line *line)
             }
             else
             {
-                /* TODO: Use symbol table to see what labels defined */
-                /* TODO: Check if the operand is a label */
-                /* TODO: Check if the operand is a "string" */
-
-                if (line->statement_type == COMMAND)
+                if (parse_operands(line, token) == FALSE)
                 {
-                    /* TODO: Check if it's a number, use isdigit */
-
-                    if (is_register(token))
-                    {
-                        /* TODO: If it's not a register, check if it's number or label name or by .extern */
-
-                        if (is_register_exists(token))
-                        {
-                            printf("Command: %s\n", token);
-                        }
-                        else
-                        {
-                            line->has_error = TRUE;
-                            sprintf(line->error_message, INVALID_DEFINITION, token);
-                            return TRUE;
-                        }
-                    }
-                    else if (is_number(token))
-                    {
-                        /* TODO: What need to check here? */
-                    }
-                    else
-                    {
-                        line->has_error = TRUE;
-                        sprintf(line->error_message, INVALID_DEFINITION, token);
-                        return TRUE;
-                    }
-                }
-                else if (line->statement_type == DIRECTIVE)
-                {
-                    /* TODO: Check if it's a number, use isdigit */
-
-                    if (is_number(token))
-                    {
-                        printf("Directive: %s\n", token);
-                    }
-                    else
-                    {
-                        line->has_error = TRUE;
-                        sprintf(line->error_message, INVALID_DEFINITION, token);
-                        return TRUE;
-                    }
+                    return TRUE;
                 }
 
                 line->has_error = TRUE;
@@ -161,4 +104,88 @@ int parse_line(Line *line)
 
     free(duplicated_line);
     return FALSE;
+}
+
+int validate_label(Line *line, char *label)
+{
+    if (is_label_above_max_length(label))
+    {
+        line->has_error = TRUE;
+        strcpy(line->error_message, MAX_LENGTH_LABEL);
+        return FALSE;
+    }
+
+    if (is_label_equals_command(label))
+    {
+        line->has_error = TRUE;
+        strcpy(line->error_message, MAX_EQUALS_COMMAND);
+        return FALSE;
+    }
+
+    if (is_label_equals_directive(label))
+    {
+        line->has_error = TRUE;
+        strcpy(line->error_message, MAX_EQUALS_DIRECTIVE);
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+int parse_operands(Line *line, char *operand)
+{
+    /* TODO: Use symbol table to see what labels defined */
+    /* TODO: Check if the operand is a label */
+    /* TODO: Check if the operand is a "string" */
+
+    if (line->statement_type == COMMAND)
+    {
+        /* TODO: Check if it's a number, use isdigit */
+
+        if (is_register(operand))
+        {
+            /* TODO: If it's not a register, check if it's number or label name or by .extern */
+
+            if (is_register_exists(operand))
+            {
+                printf("Command: %s\n", operand);
+                return TRUE;
+            }
+            else
+            {
+                line->has_error = TRUE;
+                sprintf(line->error_message, INVALID_DEFINITION, operand);
+                return FALSE;
+            }
+        }
+        else if (is_number(operand))
+        {
+            /* TODO: What need to check here? */
+            return TRUE;
+        }
+        else
+        {
+            line->has_error = TRUE;
+            sprintf(line->error_message, INVALID_DEFINITION, operand);
+            return FALSE;
+        }
+    }
+    else if (line->statement_type == DIRECTIVE)
+    {
+        /* TODO: Check if it's a number, use isdigit */
+
+        if (is_number(operand))
+        {
+            printf("Directive: %s\n", operand);
+            return TRUE;
+        }
+        else
+        {
+            line->has_error = TRUE;
+            sprintf(line->error_message, INVALID_DEFINITION, operand);
+            return FALSE;
+        }
+    }
+
+    return TRUE;
 }
