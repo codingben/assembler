@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "constants/logger.h"
 #include "constants/messages.h"
+#include "constants/boolean.h"
 #include "utils/file_helper.h"
 #include "scanner/analyzer.h"
 #include "parser/parser.h"
@@ -33,7 +34,7 @@ int main(int argument_count, char **argument_vector)
          */
 
         /* Check if the assembly file has ".as" extension. */
-        if (validate_extension(file_name) != 0)
+        if (validate_extension(file_name) != FALSE)
         {
             printf(ERROR_FORMAT, file_name, NO_AS_EXTENSION);
             continue;

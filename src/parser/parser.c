@@ -3,6 +3,7 @@
 #include <string.h>
 #include "../constants/logger.h"
 #include "../constants/messages.h"
+#include "../constants/boolean.h"
 #include "../line/line.h"
 #include "../line/validator.h"
 #include "../utils/line_helper.h"
@@ -15,14 +16,12 @@ void parse(const char *file_name, LinkedLine *linked_line)
 
     for (; line != NULL; line = line->next)
     {
-        if (parse_line(line) == 1)
+        if (parse_line(line) == TRUE)
         {
-            if (line->has_error == 1)
+            if (line->has_error == TRUE)
             {
                 printf(ERROR_LINE_FORMAT, file_name, line->line_number, line->error_message);
             }
-
-            continue;
         }
 
         /* printf(LOG_LINE_FORMAT, file_name, line->line_number, line->text); */
@@ -47,53 +46,53 @@ int parse_line(Line *line)
         if (is_empty_line(*token))
         {
             line->statement_type = EMPTY;
-            return 1;
+            return TRUE;
         }
 
         if (is_comment_line(*token))
         {
             line->statement_type = EMPTY;
-            return 1;
+            return TRUE;
         }
 
         /* Remove '\n' from lines like: "END: stop\n". */
         remove_new_line_character(token);
 
-        if (is_label(token) == 1)
+        if (is_label(token))
         {
-            if (is_label_above_max_length(token) == 1)
+            if (is_label_above_max_length(token))
             {
-                line->has_error = 1;
+                line->has_error = TRUE;
                 strcpy(line->error_message, MAX_LENGTH_LABEL);
-                return 1;
+                return TRUE;
             }
 
-            if (is_label_equals_command(token) == 0)
+            if (is_label_equals_command(token))
             {
-                line->has_error = 1;
+                line->has_error = TRUE;
                 strcpy(line->error_message, MAX_EQUALS_COMMAND);
-                return 1;
+                return TRUE;
             }
 
-            if (is_label_equals_directive(token) == 0)
+            if (is_label_equals_directive(token))
             {
-                line->has_error = 1;
+                line->has_error = TRUE;
                 strcpy(line->error_message, MAX_EQUALS_DIRECTIVE);
-                return 1;
+                return TRUE;
             }
 
             memcpy(line->label, token, strlen(token) + 1);
         }
         else
         {
-            if (is_command(token) == 0)
+            if (is_command(token))
             {
                 /* TODO: Call it "operation code (opcode)" */
 
                 line->statement_type = COMMAND;
                 memcpy(line->command, token, strlen(token) + 1);
             }
-            else if (is_directive(token) == 0)
+            else if (is_directive(token))
             {
                 /* TODO: Check if it's a number or "string" */
 
@@ -110,19 +109,19 @@ int parse_line(Line *line)
                 {
                     /* TODO: Check if it's a number, use isdigit */
 
-                    if (is_register(token) == 1)
+                    if (is_register(token))
                     {
                         /* TODO: If it's not a register, check if it's number or label name or by .extern */
 
-                        if (is_register_exists(token) == 0)
+                        if (is_register_exists(token))
                         {
                             printf("Command: %s\n", token);
                         }
                         else
                         {
-                            line->has_error = 1;
+                            line->has_error = TRUE;
                             sprintf(line->error_message, INVALID_DEFINITION, token);
-                            return 1;
+                            return TRUE;
                         }
                     }
                     else if (is_number(token))
@@ -131,9 +130,9 @@ int parse_line(Line *line)
                     }
                     else
                     {
-                        line->has_error = 1;
+                        line->has_error = TRUE;
                         sprintf(line->error_message, INVALID_DEFINITION, token);
-                        return 1;
+                        return TRUE;
                     }
                 }
                 else if (line->statement_type == DIRECTIVE)
@@ -146,13 +145,13 @@ int parse_line(Line *line)
                     }
                     else
                     {
-                        line->has_error = 1;
+                        line->has_error = TRUE;
                         sprintf(line->error_message, INVALID_DEFINITION, token);
-                        return 1;
+                        return TRUE;
                     }
                 }
 
-                line->has_error = 1;
+                line->has_error = TRUE;
                 sprintf(line->error_message, UNKNOWN_LINE_STATEMENT);
             }
         }
@@ -161,5 +160,5 @@ int parse_line(Line *line)
     }
 
     free(duplicated_line);
-    return 0;
+    return FALSE;
 }

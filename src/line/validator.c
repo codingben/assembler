@@ -1,32 +1,52 @@
 #include <stdlib.h>
 #include <string.h>
+#include "../constants/boolean.h"
 #include "line.h"
 
 int is_empty_line(char value)
 {
-    return value == '\n';
+    if (value == '\n')
+    {
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 int is_comment_line(char value)
 {
-    return value == ';';
+    if (value == ';')
+    {
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 int is_label(char *value)
 {
-    return value[strlen(value) - 1] == ':';
+    if (value[strlen(value) - 1] == ':')
+    {
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 int is_label_above_max_length(char *value)
 {
-    return strlen(value) > MAX_LABEL_LENGTH;
+    if (strlen(value) > MAX_LABEL_LENGTH)
+    {
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 /* DRY: Make generic function similar to is_label_equals_directive(). */
 int is_label_equals_command(char *value)
 {
     int i = 0;
-    int result = 0;
 
     /* Allocate new temp value. */
     char *temp = malloc(strlen(value) + 1);
@@ -40,23 +60,20 @@ int is_label_equals_command(char *value)
     for (i = 0; i < COMMANDS_SIZE; i++)
     {
         /* Compare given value with known commands. */
-        result = strcmp(commands[i].name, temp);
-
-        if (result == 0)
+        if (strcmp(commands[i].name, temp) == 0)
         {
-            break;
+            return TRUE;
         }
     }
 
     free(temp);
-    return result;
+    return FALSE;
 }
 
 /* DRY: Make generic function similar to is_label_equals_command(). */
 int is_label_equals_directive(char *value)
 {
     int i = 0;
-    int result = 0;
 
     /* Allocate new temp value. */
     char *temp = malloc(strlen(value) + 1);
@@ -70,59 +87,56 @@ int is_label_equals_directive(char *value)
     for (i = 0; i < DIRECTIVES_SIZE; i++)
     {
         /* Compare given value with known commands. */
-        result = strcmp(directives[i].name, temp);
-
-        if (result == 0)
+        if (strcmp(directives[i].name, temp) == 0)
         {
-            break;
+            return TRUE;
         }
     }
 
     free(temp);
-    return result;
+    return FALSE;
 }
 
 int is_command(char *value)
 {
     int i = 0;
-    int result = 0;
 
     for (i = 0; i < COMMANDS_SIZE; i++)
     {
         /* Compare given value with known commands. */
-        result = strcmp(commands[i].name, value);
-
-        if (result == 0)
+        if (strcmp(commands[i].name, value) == 0)
         {
-            break;
+            return TRUE;
         }
     }
 
-    return result;
+    return FALSE;
 }
 
 int is_directive(char *value)
 {
     int i = 0;
-    int result = 0;
 
     for (i = 0; i < DIRECTIVES_SIZE; i++)
     {
         /* Compare given value with known commands. */
-        result = strcmp(directives[i].name, value);
-
-        if (result == 0)
+        if (strcmp(directives[i].name, value) == 0)
         {
-            break;
+            return TRUE;
         }
     }
 
-    return result;
+    return FALSE;
 }
 
 int is_register(char *value)
 {
-    return value[0] == '$';
+    if (value[0] == '$')
+    {
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 int is_number(char *value)
@@ -142,18 +156,15 @@ int is_number(char *value)
 int is_register_exists(char *value)
 {
     int i = 0;
-    int result = 0;
 
     for (i = 0; i < REGISTER_SIZE; i++)
     {
         /* Compare given value with known registers. */
-        result = strcmp(registers[i].name, value);
-
-        if (result == 0)
+        if (strcmp(registers[i].name, value) == 0)
         {
-            break;
+            return TRUE;
         }
     }
 
-    return result;
+    return FALSE;
 }
