@@ -152,8 +152,8 @@ int parse_line(Line *line)
                     }
                 }
 
-                /* line->has_error = 1;
-                sprintf(line->error_message, INVALID_DEFINITION, token); */
+                line->has_error = 1;
+                sprintf(line->error_message, UNKNOWN_LINE_STATEMENT);
             }
         }
 
