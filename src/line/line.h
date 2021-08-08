@@ -9,6 +9,7 @@
 #define MAX_REGISTER_LENGTH 3
 #define COMMANDS_SIZE 27
 #define DIRECTIVES_SIZE 6
+#define REGISTER_SIZE 32
 
 typedef struct
 {

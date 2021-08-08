@@ -138,3 +138,22 @@ int is_number(char *value)
 
     return *result == (char)0;
 }
+
+int is_register_exists(char *value)
+{
+    int i = 0;
+    int result = 0;
+
+    for (i = 0; i < REGISTER_SIZE; i++)
+    {
+        /* Compare given value with known registers. */
+        result = strcmp(registers[i].name, value);
+
+        if (result == 0)
+        {
+            break;
+        }
+    }
+
+    return result;
+}
