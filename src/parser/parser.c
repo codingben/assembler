@@ -161,6 +161,8 @@ int parse_operands(Line *line, char *operand)
         else if (is_number(operand))
         {
             /* TODO: What need to check here? */
+
+            printf("Number: %s\n", operand);
             return TRUE;
         }
         else
