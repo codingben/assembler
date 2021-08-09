@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include "../line/line.h"
 
 char *duplicate(char *value)
 {
@@ -42,4 +43,20 @@ void remove_new_line_character(char *value)
             value[i] = 0;
         }
     }
+}
+
+int find_register(char *value)
+{
+    int i = 0;
+
+    for (i = 0; i < REGISTER_SIZE; i++)
+    {
+        /* Compare given value with known registers. */
+        if (strcmp(registers[i].name, value) == 0)
+        {
+            return registers[i].number;
+        }
+    }
+
+    return -1;
 }

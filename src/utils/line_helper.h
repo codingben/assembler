@@ -7,4 +7,6 @@ void remove_whitespaces(char *value);
 
 void remove_new_line_character(char *value);
 
+int find_register(char *value);
+
 #endif
