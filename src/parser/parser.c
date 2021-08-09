@@ -140,8 +140,6 @@ int parse_operands(Line *line, char *operand)
 
     if (line->statement_type == COMMAND)
     {
-        /* TODO: Check if it's a number, use isdigit */
-
         if (is_register(operand))
         {
             /* TODO: If it's not a register, check if it's number or label name or by .extern */
@@ -174,10 +172,10 @@ int parse_operands(Line *line, char *operand)
     }
     else if (line->statement_type == DIRECTIVE)
     {
-        /* TODO: Check if it's a number, use isdigit */
-
         if (is_number(operand))
         {
+            /* TODO: What need to check here? */
+
             printf("Directive: %s\n", operand);
             return TRUE;
         }
