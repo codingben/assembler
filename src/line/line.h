@@ -10,6 +10,7 @@
 #define COMMANDS_SIZE 27
 #define DIRECTIVES_SIZE 6
 #define REGISTER_SIZE 32
+#define MAX_OPERANDS_SIZE 80
 
 typedef struct
 {
@@ -116,6 +117,8 @@ typedef struct line
     char label[MAX_LABEL_LENGTH];
     char command[MAX_COMMAND_LENGTH];
     char directive[MAX_DIRECTIVE_LENGTH];
+    char operands[MAX_OPERANDS_SIZE][MAX_OPERANDS_SIZE];
+    int operands_count;
     struct line *next;
 } Line;
 
