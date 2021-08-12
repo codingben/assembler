@@ -8,11 +8,11 @@
 #include "../line/validator.h"
 #include "../utils/line_helper.h"
 
-int parse_line(Line *line);
+void parse_line(Line *line);
 
-int validate_label(Line *line, char *label);
+void parse_label(Line *line, char *label);
 
-int parse_operands(Line *line, char *operand);
+void parse_operands(Line *line, char *operand);
 
 void parse(const char *file_name, LinkedLine *linked_line)
 {
@@ -20,25 +20,25 @@ void parse(const char *file_name, LinkedLine *linked_line)
 
     for (; line != NULL; line = line->next)
     {
-        if (parse_line(line) == TRUE)
-        {
-            if (line->has_error == TRUE)
-            {
-                printf(ERROR_LINE_FORMAT, file_name, line->line_number, line->error_message);
-            }
-        }
+        parse_line(line);
 
-        /* printf(LOG_LINE_FORMAT, file_name, line->line_number, line->text); */
+        /*
+            1. Validate parsed line, like it it's command or directive.
+            2. If it has operands, check if this command can have more than one operand (e.g. register).
+        */
+
+        if (line->has_error == TRUE)
+        {
+            printf(ERROR_LINE_FORMAT, file_name, line->line_number, line->error_message);
+        }
     }
 }
 
-/* TODO: Make the return type better of this function */
-int parse_line(Line *line)
+void parse_line(Line *line)
 {
     /* TODO: Parse syntax, and collect error(s) */
     /* TODO: Check for entry or extern to create output files */
     /* TODO: Add symbol table, what is IC? */
-    /* TODO: Detect and set registers */
 
     /* Breaking this line into words (tokens). */
     char delimeter[] = " ,";
@@ -47,16 +47,15 @@ int parse_line(Line *line)
 
     while (token != NULL)
     {
-        if (is_empty_line(*token))
+        if (is_empty_line(token))
         {
             line->statement_type = EMPTY;
-            return TRUE;
+            return;
         }
-
-        if (is_comment_line(*token))
+        else if (is_comment_line(token))
         {
-            line->statement_type = EMPTY;
-            return TRUE;
+            line->statement_type = COMMENT;
+            return;
         }
 
         /* Remove '\n' from lines like: "END: stop\n". */
@@ -64,12 +63,7 @@ int parse_line(Line *line)
 
         if (is_label(token))
         {
-            if (validate_label(line, token) == FALSE)
-            {
-                return TRUE;
-            }
-
-            memcpy(line->label, token, strlen(token) + 1);
+            parse_label(line, token);
         }
         else
         {
@@ -89,13 +83,7 @@ int parse_line(Line *line)
             }
             else
             {
-                if (parse_operands(line, token) == FALSE)
-                {
-                    return TRUE;
-                }
-
-                line->has_error = TRUE;
-                sprintf(line->error_message, UNKNOWN_LINE_STATEMENT);
+                parse_operands(line, token);
             }
         }
 
@@ -103,40 +91,37 @@ int parse_line(Line *line)
     }
 
     free(duplicated_line);
-    return FALSE;
 }
 
-int validate_label(Line *line, char *label)
+void parse_label(Line *line, char *label)
 {
     if (is_label_above_max_length(label))
     {
         line->has_error = TRUE;
         strcpy(line->error_message, MAX_LENGTH_LABEL);
-        return FALSE;
     }
-
-    if (is_label_equals_command(label))
+    else if (is_label_equals_command(label))
     {
         line->has_error = TRUE;
         strcpy(line->error_message, MAX_EQUALS_COMMAND);
-        return FALSE;
     }
-
-    if (is_label_equals_directive(label))
+    else if (is_label_equals_directive(label))
     {
         line->has_error = TRUE;
         strcpy(line->error_message, MAX_EQUALS_DIRECTIVE);
-        return FALSE;
     }
-
-    return TRUE;
+    else
+    {
+        memcpy(line->label, label, strlen(label) + 1);
+    }
 }
 
-int parse_operands(Line *line, char *operand)
+void parse_operands(Line *line, char *operand)
 {
     /* TODO: Use symbol table to see what labels defined */
-    /* TODO: Check if the operand is a label */
+    /* TODO: Check if the operand is a label (symbol table) */
     /* TODO: Check if the operand is a "string" */
+    /* TODO: What will happen when no operands found? Error? */
 
     if (line->statement_type == COMMAND)
     {
@@ -146,28 +131,26 @@ int parse_operands(Line *line, char *operand)
 
             if (is_register_exists(operand))
             {
-                printf("Command: %s\n", operand);
-                return TRUE;
+                strcpy(line->operands[line->operands_count], operand);
+                line->operands_count = line->operands_count + 1;
             }
             else
             {
                 line->has_error = TRUE;
                 sprintf(line->error_message, INVALID_DEFINITION, operand);
-                return FALSE;
             }
         }
         else if (is_number(operand))
         {
             /* TODO: What need to check here? */
 
-            printf("Number: %s\n", operand);
-            return TRUE;
+            strcpy(line->operands[line->operands_count], operand);
+            line->operands_count = line->operands_count + 1;
         }
         else
         {
             line->has_error = TRUE;
             sprintf(line->error_message, INVALID_DEFINITION, operand);
-            return FALSE;
         }
     }
     else if (line->statement_type == DIRECTIVE)
@@ -176,16 +159,13 @@ int parse_operands(Line *line, char *operand)
         {
             /* TODO: What need to check here? */
 
-            printf("Directive: %s\n", operand);
-            return TRUE;
+            strcpy(line->operands[line->operands_count], operand);
+            line->operands_count = line->operands_count + 1;
         }
         else
         {
             line->has_error = TRUE;
             sprintf(line->error_message, INVALID_DEFINITION, operand);
-            return FALSE;
         }
     }
-
-    return TRUE;
 }
