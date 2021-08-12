@@ -8,6 +8,8 @@
 #define MAX_EQUALS_COMMAND "label cannot be command.\n"
 #define MAX_EQUALS_DIRECTIVE "label cannot be directive.\n"
 #define INVALID_DEFINITION "unrecognized definiton: %s\n"
-#define UNKNOWN_LINE_STATEMENT "unknown line statement.\n"
+#define NO_OPERANDS_FOUND "could not find operands.\n"
+#define ONLY_ZERO_OPERAND "only $0 register can be used for `call` command.\n"
+#define ONLY_ONE_OPERAND "only one operand required.\n"
 
 #endif
