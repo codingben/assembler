@@ -3,14 +3,14 @@
 #include "../constants/boolean.h"
 #include "line.h"
 
-int is_empty_line(char value)
+int is_empty_line(char *value)
 {
-    return value == '\n' ? TRUE : FALSE;
+    return value[0] == '\n' ? TRUE : FALSE;
 }
 
-int is_comment_line(char value)
+int is_comment_line(char *value)
 {
-    return value == ';' ? TRUE : FALSE;
+    return value[0] == ';' ? TRUE : FALSE;
 }
 
 int is_label(char *value)
