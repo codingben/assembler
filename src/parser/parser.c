@@ -14,6 +14,8 @@ void parse_label(Line *line, char *label);
 
 void parse_operands(Line *line, char *operand);
 
+void validate_parsed_line(Line *line);
+
 void parse(const char *file_name, LinkedLine *linked_line)
 {
     Line *line = linked_line->head;
@@ -22,11 +24,9 @@ void parse(const char *file_name, LinkedLine *linked_line)
     {
         parse_line(line);
 
-        /*
-            1. Validate parsed line, like it it's command or directive.
-            2. If it has operands, check if this command can have more than one operand (e.g. register).
-        */
+        validate_parsed_line(line);
 
+        /* TODO: Collect errors function */
         if (line->has_error == TRUE)
         {
             printf(ERROR_LINE_FORMAT, file_name, line->line_number, line->error_message);
@@ -166,6 +166,38 @@ void parse_operands(Line *line, char *operand)
         {
             line->has_error = TRUE;
             sprintf(line->error_message, INVALID_DEFINITION, operand);
+        }
+    }
+}
+
+void validate_parsed_line(Line *line)
+{
+    if (line->statement_type == COMMAND || line->statement_type == DIRECTIVE)
+    {
+        /*if (line->operands_count == 0)
+        {
+            line->has_error = TRUE;
+            sprintf(line->error_message, NO_OPERANDS_FOUND);
+        }*/
+
+        /* TODO: Iterate -> jmp, la, call, stop only one register (call only $0 register) */
+        if (strcmp(line->command, "call") == 0)
+        {
+            /* BUG: It'll be 0 because `vall` isn't recognized as an operand */
+            /* TODO: Symbol table to fix it */
+            if (line->operands_count == 1)
+            {
+                if (strcmp(line->operands[0], "$0") != 0)
+                {
+                    line->has_error = TRUE;
+                    sprintf(line->error_message, ONLY_ZERO_OPERAND);
+                }
+            }
+            else
+            {
+                line->has_error = TRUE;
+                sprintf(line->error_message, ONLY_ONE_OPERAND);
+            }
         }
     }
 }
