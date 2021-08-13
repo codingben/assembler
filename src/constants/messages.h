@@ -11,5 +11,6 @@
 #define NO_OPERANDS_FOUND "could not find operands.\n"
 #define ONLY_ZERO_OPERAND "only $0 register can be used for `call` command.\n"
 #define ONLY_ONE_OPERAND "only one operand required.\n"
+#define NO_LABEL_FOUND "no label found.\n"
 
 #endif

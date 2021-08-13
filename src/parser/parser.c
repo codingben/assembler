@@ -96,7 +96,12 @@ void parse_line(Line *line)
 
 void parse_label(Line *line, char *label)
 {
-    if (is_label_above_max_length(label))
+    if (is_label_empty(label))
+    {
+        line->has_error = TRUE;
+        strcpy(line->error_message, NO_LABEL_FOUND);
+    }
+    else if (is_label_above_max_length(label))
     {
         line->has_error = TRUE;
         strcpy(line->error_message, MAX_LENGTH_LABEL);

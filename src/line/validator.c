@@ -18,6 +18,11 @@ int is_label(char *value)
     return value[strlen(value) - 1] == ':' ? TRUE : FALSE;
 }
 
+int is_label_empty(char *value)
+{
+    return strlen(value) == 1 ? TRUE : FALSE;
+}
+
 int is_label_above_max_length(char *value)
 {
     return strlen(value) > MAX_LABEL_LENGTH ? TRUE : FALSE;
