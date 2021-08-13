@@ -148,3 +148,8 @@ int is_register_exists(char *value)
 
     return FALSE;
 }
+
+int is_quotation_mark(char *value)
+{
+    return value[0] == '"';
+}

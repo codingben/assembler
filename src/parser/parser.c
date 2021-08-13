@@ -168,6 +168,13 @@ void parse_operands(Line *line, char *operand)
             strcpy(line->operands[line->operands_count], operand);
             line->operands_count = line->operands_count + 1;
         }
+        else if (is_quotation_mark(operand))
+        {
+            remove_quotation_marks(operand);
+
+            strcpy(line->operands[line->operands_count], operand);
+            line->operands_count = line->operands_count + 1;
+        }
         else
         {
             line->has_error = TRUE;

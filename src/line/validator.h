@@ -25,4 +25,6 @@ int is_number(char *value);
 
 int is_register_exists(char *value);
 
+int is_quotation_mark(char *value);
+
 #endif
