@@ -9,6 +9,6 @@ void remove_new_line_character(char *value);
 
 int find_register(char *value);
 
-void *remove_quotation_marks(char *value);
+void remove_quotation_marks(char *value);
 
 #endif

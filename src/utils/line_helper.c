@@ -61,7 +61,7 @@ int find_register(char *value)
     return -1;
 }
 
-void *remove_quotation_marks(char *value)
+void remove_quotation_marks(char *value)
 {
     /* Remove `"` character in first index. */
     memmove(&value[0], &value[1], strlen(value));
