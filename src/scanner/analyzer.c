@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "../constants/logger.h"
 #include "../constants/messages.h"
@@ -42,6 +43,13 @@ LinkedLine *analyze(const char *file_name)
 
     /* Close file after analyzing. */
     fclose(file);
+
+    /* Check if the assembly file is empty. */
+    if (line_number == 1)
+    {
+        free(linked_line);
+        return NULL;
+    }
 
     /* Linked lines for syntax parsing. */
     return linked_line;
