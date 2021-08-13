@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "../constants/boolean.h"
 #include "line.h"
 
 int is_empty_line(char *value)
 {
-    return value[0] == '\n' ? TRUE : FALSE;
+    return isspace(*value) ? TRUE : FALSE;
 }
 
 int is_comment_line(char *value)
