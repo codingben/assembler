@@ -8,7 +8,7 @@
 #include "../line/validator.h"
 #include "../utils/line_helper.h"
 
-void parse_line(Line *line);
+int parse_line(Line *line);
 
 void parse_label(Line *line, char *label);
 
@@ -18,14 +18,15 @@ void validate_parsed_line(Line *line);
 
 void display_line_error(const char *file_name, Line *line);
 
-void parse(const char *file_name, LinkedLine *linked_line)
+int parse(const char *file_name, LinkedLine *linked_line)
 {
     Line *line = linked_line->head;
+    int parsed = FALSE;
 
     for (; line != NULL; line = line->next)
     {
         /* Parsing the syntax and setting the relevant data (e.g. operands). */
-        parse_line(line);
+        parsed = parse_line(line);
 
         /* Validating the parsed line by known rules (e.g. only $0 operand for `call`). */
         validate_parsed_line(line);
@@ -33,9 +34,11 @@ void parse(const char *file_name, LinkedLine *linked_line)
         /* Display error that found in the line after parsing and validating the line. */
         display_line_error(file_name, line);
     }
+
+    return parsed;
 }
 
-void parse_line(Line *line)
+int parse_line(Line *line)
 {
     /* TODO: Parse syntax, and collect error(s) */
     /* TODO: Check for entry or extern to create output files */
@@ -44,19 +47,32 @@ void parse_line(Line *line)
     /* Breaking this line into words (tokens). */
     char delimeter[] = " ,";
     char *duplicated_line = duplicate(line->text);
-    char *token = strtok(duplicated_line, delimeter);
+    char *token = NULL;
+
+    if (duplicated_line == NULL)
+    {
+        return FALSE;
+    }
+
+    token = strtok(duplicated_line, delimeter);
+
+    if (token == NULL)
+    {
+        free(duplicated_line);
+        return FALSE;
+    }
 
     while (token != NULL)
     {
         if (is_empty_line(token))
         {
             line->statement_type = EMPTY;
-            return;
+            break;
         }
         else if (is_comment_line(token))
         {
             line->statement_type = COMMENT;
-            return;
+            break;
         }
 
         /* Remove '\n' from lines like: "END: stop\n". */
@@ -92,6 +108,7 @@ void parse_line(Line *line)
     }
 
     free(duplicated_line);
+    return TRUE;
 }
 
 void parse_label(Line *line, char *label)
@@ -126,7 +143,6 @@ void parse_operands(Line *line, char *operand)
 {
     /* TODO: Use symbol table to see what labels defined */
     /* TODO: Check if the operand is a label (symbol table) */
-    /* TODO: Check if the operand is a "string" */
     /* TODO: What will happen when no operands found? Error? */
 
     if (line->statement_type == COMMAND)
@@ -185,39 +201,42 @@ void parse_operands(Line *line, char *operand)
 
 void validate_parsed_line(Line *line)
 {
-    if (line->statement_type == COMMAND || line->statement_type == DIRECTIVE)
+    if (line->statement_type == EMPTY || line->statement_type == COMMENT)
     {
-        /*if (line->operands_count == 0)
-        {
-            line->has_error = TRUE;
-            sprintf(line->error_message, NO_OPERANDS_FOUND);
-        }*/
+        return;
+    }
 
-        /* TODO: Iterate -> jmp, la, call, stop only one register (call only $0 register) */
-        if (strcmp(line->command, "call") == 0)
+    /*if (line->operands_count == 0)
+    {
+        line->has_error = TRUE;
+        sprintf(line->error_message, NO_OPERANDS_FOUND);
+    }*/
+
+    /* TODO: Iterate -> jmp, la, call, stop only one register (call only $0 register) */
+    /* TODO: Do I J table */
+    if (strcmp(line->command, "call") == 0)
+    {
+        /* BUG: It'll be 0 because `vall` isn't recognized as an operand */
+        /* TODO: Symbol table to fix it */
+        if (line->operands_count == 1)
         {
-            /* BUG: It'll be 0 because `vall` isn't recognized as an operand */
-            /* TODO: Symbol table to fix it */
-            if (line->operands_count == 1)
-            {
-                if (strcmp(line->operands[0], "$0") != 0)
-                {
-                    line->has_error = TRUE;
-                    sprintf(line->error_message, ONLY_ZERO_OPERAND);
-                }
-            }
-            else
+            if (strcmp(line->operands[0], "$0") != 0)
             {
                 line->has_error = TRUE;
-                sprintf(line->error_message, ONLY_ONE_OPERAND);
+                sprintf(line->error_message, ONLY_ZERO_OPERAND);
             }
+        }
+        else
+        {
+            line->has_error = TRUE;
+            sprintf(line->error_message, ONLY_ONE_OPERAND);
         }
     }
 }
 
 void display_line_error(const char *file_name, Line *line)
 {
-    if (line->has_error == TRUE)
+    if (line->has_error)
     {
         printf(ERROR_LINE_FORMAT, file_name, line->line_number, line->error_message);
     }
