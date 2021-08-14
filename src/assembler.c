@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021 Ben Ukhanov. All rights reserved.
+ */
+
 #include <stdio.h>
 #include "constants/logger.h"
 #include "constants/messages.h"
@@ -5,6 +9,7 @@
 #include "utils/file_helper.h"
 #include "scanner/analyzer.h"
 #include "parser/parser.h"
+#include "symbol/symbol.h"
 
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
@@ -24,6 +29,7 @@ int main(int argument_count, char **argument_vector)
     for (i = 1; i < argument_count; ++i)
     {
         const char *file_name = argument_vector[i];
+        LinkedSymbol *linked_symbol = NULL;
         LinkedLine *analyzed = NULL;
         int validated = FALSE;
         int parsed = FALSE;
@@ -55,7 +61,15 @@ int main(int argument_count, char **argument_vector)
         }
 
         /* Syntax parsing. */
-        parsed = parse(file_name, analyzed);
+        linked_symbol = create_linked_symbol();
+
+        if (linked_symbol == NULL)
+        {
+            printf(ERROR_FORMAT, file_name, FAILED_ANALYZE_FILE);
+            continue;
+        }
+
+        parsed = parse(file_name, analyzed, linked_symbol);
 
         if (parsed)
         {
