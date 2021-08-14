@@ -95,7 +95,14 @@ int parse_labels(Line *line, LinkedSymbol *linked_symbol)
 
                 if (symbol != NULL)
                 {
-                    memcpy(symbol->label, token, strlen(token) + 1);
+                    char *label = remove_last_character(token);
+
+                    if (label != NULL)
+                    {
+                        memcpy(symbol->label, label, strlen(label) + 1);
+                    }
+
+                    free(label);
                 }
             }
         }
