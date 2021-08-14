@@ -24,7 +24,10 @@ int main(int argument_count, char **argument_vector)
     for (i = 1; i < argument_count; ++i)
     {
         const char *file_name = argument_vector[i];
-        LinkedLine *linked_line;
+        LinkedLine *analyzed = NULL;
+        int validated = FALSE;
+        int parsed = FALSE;
+        int compiled = FALSE;
 
         /* Steps:
          * 1. if (validated) analyze (scanner)
@@ -34,26 +37,43 @@ int main(int argument_count, char **argument_vector)
          */
 
         /* Check if the assembly file has ".as" extension. */
-        if (validate_extension(file_name) != FALSE)
+        validated = validate_extension(file_name);
+
+        if (validated == FALSE)
         {
             printf(ERROR_FORMAT, file_name, NO_AS_EXTENSION);
             continue;
         }
 
         /* Reading the assembly source code. */
-        linked_line = analyze(file_name);
+        analyzed = analyze(file_name);
 
-        if (linked_line == NULL)
+        if (analyzed == NULL)
         {
             printf(ERROR_FORMAT, file_name, FAILED_ANALYZE_FILE);
             continue;
         }
 
         /* Syntax parsing. */
-        parse(file_name, linked_line);
+        parsed = parse(file_name, analyzed);
+
+        if (parsed)
+        {
+            /* TODO: compiled = compile(...) */
+        }
+        else
+        {
+            printf(ERROR_FORMAT, file_name, FAILED_ANALYZE_FILE);
+            continue;
+        }
+
+        if (compiled)
+        {
+            /* TODO: Build object file (and other files if needed) */
+        }
 
         /* Free saved lines. */
-        delete_linked_line(linked_line);
+        delete_linked_line(analyzed);
     }
 
     return EXIT_SUCCESS;
