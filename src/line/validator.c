@@ -34,25 +34,15 @@ int is_label_equals_command(char *value)
 {
     int i = 0;
 
-    /* Allocate new temp value. */
-    char *temp = malloc(strlen(value) + 1);
-
-    /* Copy the value beacuse we need to remove ":" character. */
-    memcpy(temp, value, strlen(value) + 1);
-
-    /* Remove ":" character. */
-    temp[strlen(temp) - 1] = 0;
-
     for (i = 0; i < COMMANDS_SIZE; i++)
     {
         /* Compare given value with known commands. */
-        if (strcmp(commands[i].name, temp) == 0)
+        if (strcmp(commands[i].name, value) == 0)
         {
             return TRUE;
         }
     }
 
-    free(temp);
     return FALSE;
 }
 
@@ -61,25 +51,15 @@ int is_label_equals_directive(char *value)
 {
     int i = 0;
 
-    /* Allocate new temp value. */
-    char *temp = malloc(strlen(value) + 1);
-
-    /* Copy the value beacuse we need to remove ":" character. */
-    memcpy(temp, value, strlen(value) + 1);
-
-    /* Remove ":" character. */
-    temp[strlen(temp) - 1] = 0;
-
     for (i = 0; i < DIRECTIVES_SIZE; i++)
     {
         /* Compare given value with known commands. */
-        if (strcmp(directives[i].name, temp) == 0)
+        if (strcmp(directives[i].name, value) == 0)
         {
             return TRUE;
         }
     }
 
-    free(temp);
     return FALSE;
 }
 
