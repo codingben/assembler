@@ -9,5 +9,5 @@ int validate_extension(const char *filename)
     char *extension = strrchr(filename, '.');
 
     /* Compare extracted extension with expected one. */
-    return strcmp(extension, ASSEMBLY_EXTENSION) != FALSE;
+    return strcmp(extension, ASSEMBLY_EXTENSION) != 0 ? FALSE : TRUE;
 }
