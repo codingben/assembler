@@ -8,6 +8,7 @@ compile:
 	src/line/validator.c \
 	src/scanner/analyzer.c \
 	src/parser/parser.c \
+	src/symbol/symbol.c \
 	src/utils/file_helper.c \
 	src/utils/line_helper.c
 
