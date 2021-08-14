@@ -9,7 +9,7 @@ char *duplicate(char *value)
 
     if (new_line == NULL)
     {
-        return 0;
+        return NULL;
     }
 
     memcpy(new_line, value, length);

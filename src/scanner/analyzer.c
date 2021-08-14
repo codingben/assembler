@@ -7,8 +7,8 @@
 
 LinkedLine *analyze(const char *file_name)
 {
-    FILE *file;
-    LinkedLine *linked_line;
+    FILE *file = NULL;
+    LinkedLine *linked_line = NULL;
     char text[ASM_MAX_LINE_LENGTH];
     int line_number = 1;
 

@@ -63,8 +63,8 @@ Line *add_line(LinkedLine *linked_line)
 
 void delete_linked_line(LinkedLine *linked_line)
 {
-    Line *current_node;
-    Line *next_node;
+    Line *current_node = NULL;
+    Line *next_node = NULL;
 
     if (linked_line == NULL)
     {
