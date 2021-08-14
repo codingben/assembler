@@ -3,7 +3,7 @@
 
 #define ASM_MAX_LINE_LENGTH 81 /* The last character is '\n' */
 #define ERROR_MAX_LINE_LENGTH 120
-#define MAX_LABEL_LENGTH 31
+#define MAX_LABEL_LENGTH 30
 #define MAX_COMMAND_LENGTH 5
 #define MAX_DIRECTIVE_LENGTH 10
 #define MAX_REGISTER_LENGTH 3
