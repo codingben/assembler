@@ -111,7 +111,6 @@ typedef struct line
 {
     char text[ASM_MAX_LINE_LENGTH];
     int line_number;
-    int has_error;
     char error_message[ERROR_MAX_LINE_LENGTH];
     statement_type statement_type;
     char label[MAX_LABEL_LENGTH];
