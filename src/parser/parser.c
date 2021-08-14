@@ -12,7 +12,11 @@ int parse_line(Line *line);
 
 void parse_label(Line *line, char *label);
 
-void parse_operands(Line *line, char *operand);
+void parse_operand(Line *line, char *operand);
+
+void parse_command_operand(Line *line, char *operand);
+
+void parse_directive_operand(Line *line, char *operand);
 
 void validate_parsed_line(Line *line);
 
@@ -40,10 +44,6 @@ int parse(const char *file_name, LinkedLine *linked_line)
 
 int parse_line(Line *line)
 {
-    /* TODO: Parse syntax, and collect error(s) */
-    /* TODO: Check for entry or extern to create output files */
-    /* TODO: Add symbol table, what is IC? */
-
     /* Breaking this line into words (tokens). */
     char delimeter[] = " ,";
     char *duplicated_line = duplicate(line->text);
@@ -86,21 +86,19 @@ int parse_line(Line *line)
         {
             if (is_command(token))
             {
-                /* TODO: Call it "operation code (opcode)" */
-
                 line->statement_type = COMMAND;
+
                 memcpy(line->command, token, strlen(token) + 1);
             }
             else if (is_directive(token))
             {
-                /* TODO: Check if it's a number or "string" */
-
                 line->statement_type = DIRECTIVE;
+
                 memcpy(line->directive, token, strlen(token) + 1);
             }
             else
             {
-                parse_operands(line, token);
+                parse_operand(line, token);
             }
         }
 
@@ -115,22 +113,18 @@ void parse_label(Line *line, char *label)
 {
     if (is_label_empty(label))
     {
-        line->has_error = TRUE;
         strcpy(line->error_message, NO_LABEL_FOUND);
     }
     else if (is_label_above_max_length(label))
     {
-        line->has_error = TRUE;
         strcpy(line->error_message, MAX_LENGTH_LABEL);
     }
     else if (is_label_equals_command(label))
     {
-        line->has_error = TRUE;
         strcpy(line->error_message, MAX_EQUALS_COMMAND);
     }
     else if (is_label_equals_directive(label))
     {
-        line->has_error = TRUE;
         strcpy(line->error_message, MAX_EQUALS_DIRECTIVE);
     }
     else
@@ -139,63 +133,55 @@ void parse_label(Line *line, char *label)
     }
 }
 
-void parse_operands(Line *line, char *operand)
+void parse_operand(Line *line, char *operand)
 {
-    /* TODO: Use symbol table to see what labels defined */
-    /* TODO: Check if the operand is a label (symbol table) */
-    /* TODO: What will happen when no operands found? Error? */
-
     if (line->statement_type == COMMAND)
     {
-        if (is_register(operand))
-        {
-            /* TODO: If it's not a register, check if it's number or label name or by .extern */
-
-            if (is_register_exists(operand))
-            {
-                strcpy(line->operands[line->operands_count], operand);
-                line->operands_count = line->operands_count + 1;
-            }
-            else
-            {
-                line->has_error = TRUE;
-                sprintf(line->error_message, INVALID_DEFINITION, operand);
-            }
-        }
-        else if (is_number(operand))
-        {
-            /* TODO: What need to check here? */
-
-            strcpy(line->operands[line->operands_count], operand);
-            line->operands_count = line->operands_count + 1;
-        }
-        else
-        {
-            line->has_error = TRUE;
-            sprintf(line->error_message, INVALID_DEFINITION, operand);
-        }
+        parse_command_operand(line, operand);
     }
     else if (line->statement_type == DIRECTIVE)
     {
-        if (is_number(operand))
-        {
-            /* TODO: What need to check here? */
+        parse_directive_operand(line, operand);
+    }
+}
 
-            strcpy(line->operands[line->operands_count], operand);
-            line->operands_count = line->operands_count + 1;
-        }
-        else if (is_quotation_mark(operand))
+void parse_command_operand(Line *line, char *operand)
+{
+    if (is_register(operand))
+    {
+        if (is_register_exists(operand))
         {
-            remove_quotation_marks(operand);
-
-            strcpy(line->operands[line->operands_count], operand);
-            line->operands_count = line->operands_count + 1;
+            append_parsed_operand(line, operand);
         }
         else
         {
-            line->has_error = TRUE;
             sprintf(line->error_message, INVALID_DEFINITION, operand);
         }
+    }
+    else if (is_number(operand))
+    {
+        append_parsed_operand(line, operand);
+    }
+    else
+    {
+        sprintf(line->error_message, INVALID_DEFINITION, operand);
+    }
+}
+
+void parse_directive_operand(Line *line, char *operand)
+{
+    if (is_number(operand))
+    {
+        append_parsed_operand(line, operand);
+    }
+    else if (is_quotation_mark(operand))
+    {
+        remove_quotation_marks(operand);
+        append_parsed_operand(line, operand);
+    }
+    else
+    {
+        sprintf(line->error_message, INVALID_DEFINITION, operand);
     }
 }
 
@@ -222,22 +208,29 @@ void validate_parsed_line(Line *line)
         {
             if (strcmp(line->operands[0], "$0") != 0)
             {
-                line->has_error = TRUE;
-                sprintf(line->error_message, ONLY_ZERO_OPERAND);
+                strcpy(line->error_message, ONLY_ZERO_OPERAND);
             }
         }
         else
         {
-            line->has_error = TRUE;
-            sprintf(line->error_message, ONLY_ONE_OPERAND);
+            strcpy(line->error_message, ONLY_ONE_OPERAND);
         }
     }
 }
 
 void display_line_error(const char *file_name, Line *line)
 {
-    if (line->has_error)
+    if (strlen(line->error_message) != 0)
     {
         printf(ERROR_LINE_FORMAT, file_name, line->line_number, line->error_message);
     }
+}
+
+void append_parsed_operand(Line *line, char *operand)
+{
+    int count = line->operands_count;
+
+    strcpy(line->operands[count], operand);
+
+    line->operands_count = count + 1;
 }
