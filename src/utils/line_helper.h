@@ -11,4 +11,6 @@ int find_register(char *value);
 
 void remove_quotation_marks(char *value);
 
+char *remove_last_character(char *value);
+
 #endif

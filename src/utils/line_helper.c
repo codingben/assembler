@@ -69,3 +69,16 @@ void remove_quotation_marks(char *value)
     /* Remove `"` character in last index. */
     value[strlen(value) - 1] = 0;
 }
+
+char *remove_last_character(char *value)
+{
+    /* Allocate new temp value. */
+    char *temp = malloc(strlen(value) + 1);
+
+    /* Copy the value beacuse we need to remove last character. */
+    memcpy(temp, value, strlen(value) + 1);
+
+    /* Remove last character. */
+    temp[strlen(temp) - 1] = 0;
+    return temp;
+}
