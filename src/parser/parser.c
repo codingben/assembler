@@ -7,16 +7,17 @@
 #include "../line/line.h"
 #include "../line/validator.h"
 #include "../utils/line_helper.h"
+#include "../symbol/symbol.h"
 
-int parse_line(Line *line);
+int parse_labels(Line *line, LinkedSymbol *linked_symbol);
 
-void parse_label(Line *line, char *label);
+int parse_label(Line *line, char *label);
 
-void parse_operand(Line *line, char *operand);
+void parse_operands(Line *line, LinkedSymbol *linked_symbol);
 
-void parse_command_operand(Line *line, char *operand);
+void parse_command_operand(Line *line, char *operand, LinkedSymbol *linked_symbol);
 
-void parse_directive_operand(Line *line, char *operand);
+void parse_directive_operand(Line *line, char *operand, LinkedSymbol *linked_symbol);
 
 void validate_parsed_line(Line *line);
 
@@ -24,7 +25,7 @@ void display_line_error(const char *file_name, Line *line);
 
 void append_parsed_operand(Line *line, char *operand);
 
-int parse(const char *file_name, LinkedLine *linked_line)
+int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_symbol)
 {
     Line *line = linked_line->head;
     int parsed = FALSE;
@@ -32,7 +33,8 @@ int parse(const char *file_name, LinkedLine *linked_line)
     for (; line != NULL; line = line->next)
     {
         /* Parsing the syntax and setting the relevant data (e.g. operands). */
-        parsed = parse_line(line);
+        parsed = parse_labels(line, linked_symbol);
+        parse_operands(line, linked_symbol);
 
         /* Validating the parsed line by known rules (e.g. only $0 operand for `call`). */
         validate_parsed_line(line);
@@ -41,10 +43,15 @@ int parse(const char *file_name, LinkedLine *linked_line)
         display_line_error(file_name, line);
     }
 
+    /* First need add all the labels to symbol table, and then parse the operands :) */
+    /* Need to loops because ABC exists, but in after line */
+    /* move $1, ABC*/
+    /* ABC: yo*/
+
     return parsed;
 }
 
-int parse_line(Line *line)
+int parse_labels(Line *line, LinkedSymbol *linked_symbol)
 {
     /* Breaking this line into words (tokens). */
     char delimeter[] = " ,";
@@ -82,25 +89,14 @@ int parse_line(Line *line)
 
         if (is_label(token))
         {
-            parse_label(line, token);
-        }
-        else
-        {
-            if (is_command(token))
+            if (parse_label(line, token))
             {
-                line->statement_type = COMMAND;
+                Symbol *symbol = add_symbol(linked_symbol);
 
-                memcpy(line->command, token, strlen(token) + 1);
-            }
-            else if (is_directive(token))
-            {
-                line->statement_type = DIRECTIVE;
-
-                memcpy(line->directive, token, strlen(token) + 1);
-            }
-            else
-            {
-                parse_operand(line, token);
+                if (symbol != NULL)
+                {
+                    memcpy(symbol->label, token, strlen(token) + 1);
+                }
             }
         }
 
@@ -111,7 +107,7 @@ int parse_line(Line *line)
     return TRUE;
 }
 
-void parse_label(Line *line, char *label)
+int parse_label(Line *line, char *label)
 {
     if (is_label_empty(label))
     {
@@ -132,22 +128,79 @@ void parse_label(Line *line, char *label)
     else
     {
         memcpy(line->label, label, strlen(label) + 1);
+        return TRUE;
     }
+
+    return FALSE;
 }
 
-void parse_operand(Line *line, char *operand)
+void parse_operands(Line *line, LinkedSymbol *linked_symbol)
 {
-    if (line->statement_type == COMMAND)
+    /* Breaking this line into words (tokens). */
+    char delimeter[] = " ,";
+    char *duplicated_line = duplicate(line->text);
+    char *token = NULL;
+
+    if (duplicated_line == NULL)
     {
-        parse_command_operand(line, operand);
+        return;
     }
-    else if (line->statement_type == DIRECTIVE)
+
+    token = strtok(duplicated_line, delimeter);
+
+    if (token == NULL)
     {
-        parse_directive_operand(line, operand);
+        free(duplicated_line);
+        return;
     }
+
+    while (token != NULL)
+    {
+        if (is_empty_line(token))
+        {
+            line->statement_type = EMPTY;
+            break;
+        }
+        else if (is_comment_line(token))
+        {
+            line->statement_type = COMMENT;
+            break;
+        }
+
+        /* Remove '\n' from lines like: "END: stop\n". */
+        remove_new_line_character(token);
+
+        if (is_command(token))
+        {
+            line->statement_type = COMMAND;
+
+            memcpy(line->command, token, strlen(token) + 1);
+        }
+        else if (is_directive(token))
+        {
+            line->statement_type = DIRECTIVE;
+
+            memcpy(line->directive, token, strlen(token) + 1);
+        }
+        else
+        {
+            if (line->statement_type == COMMAND)
+            {
+                parse_command_operand(line, token, linked_symbol);
+            }
+            else if (line->statement_type == DIRECTIVE)
+            {
+                parse_directive_operand(line, token, linked_symbol);
+            }
+        }
+
+        token = strtok(NULL, delimeter);
+    }
+
+    free(duplicated_line);
 }
 
-void parse_command_operand(Line *line, char *operand)
+void parse_command_operand(Line *line, char *operand, LinkedSymbol *linked_symbol)
 {
     if (is_register(operand))
     {
@@ -164,13 +217,17 @@ void parse_command_operand(Line *line, char *operand)
     {
         append_parsed_operand(line, operand);
     }
+    else if (symbol_exists(linked_symbol, operand))
+    {
+        append_parsed_operand(line, operand);
+    }
     else
     {
         sprintf(line->error_message, INVALID_DEFINITION, operand);
     }
 }
 
-void parse_directive_operand(Line *line, char *operand)
+void parse_directive_operand(Line *line, char *operand, LinkedSymbol *linked_symbol)
 {
     if (is_number(operand))
     {
@@ -179,6 +236,10 @@ void parse_directive_operand(Line *line, char *operand)
     else if (is_quotation_mark(operand))
     {
         remove_quotation_marks(operand);
+        append_parsed_operand(line, operand);
+    }
+    else if (symbol_exists(linked_symbol, operand))
+    {
         append_parsed_operand(line, operand);
     }
     else
