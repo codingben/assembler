@@ -22,6 +22,8 @@ void validate_parsed_line(Line *line);
 
 void display_line_error(const char *file_name, Line *line);
 
+void append_parsed_operand(Line *line, char *operand);
+
 int parse(const char *file_name, LinkedLine *linked_line)
 {
     Line *line = linked_line->head;
