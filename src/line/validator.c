@@ -137,5 +137,5 @@ int is_register_exists(char *value)
 
 int is_quotation_mark(char *value)
 {
-    return value[0] == '"';
+    return value[0] == '"' && value[strlen(value) - 1] == '"';
 }
