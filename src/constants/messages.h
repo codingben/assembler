@@ -9,8 +9,8 @@
 #define MAX_EQUALS_DIRECTIVE "label cannot be directive.\n"
 #define INVALID_DEFINITION "unrecognized definiton: %s\n"
 #define NO_OPERANDS_FOUND "could not find operands.\n"
-#define ONLY_ZERO_OPERAND "only $0 register can be used for `call` command.\n"
-#define ONLY_ONE_OPERAND "only one operand required.\n"
 #define NO_LABEL_FOUND "no label found.\n"
+#define NO_LABEL_DEFINED "no label `%s` defined.\n"
+#define NO_INSTRUCTION_FOUND "no instruction found.\n"
 
 #endif
