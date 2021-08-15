@@ -6,7 +6,12 @@
 
 int is_empty_line(char *value)
 {
-    return isspace(*value) ? TRUE : FALSE;
+    while (isspace(*value) && value++)
+    {
+        /* Left blank intentionally. */
+    };
+
+    return !*value ? TRUE : FALSE;
 }
 
 int is_comment_line(char *value)
