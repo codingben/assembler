@@ -62,7 +62,7 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
             parse_operands(line, linked_symbol);
 
             /* Validating the parsed line by known rules (e.g. only $0 operand for `call`). */
-            /* validate_parsed_line(line); */
+            validate_parsed_line(line);
         }
 
         /* Display error that found in the line after parsing and validating the line. */
@@ -266,11 +266,6 @@ void parse_directive_operand(Line *line, char *operand, LinkedSymbol *linked_sym
 
 void validate_parsed_line(Line *line)
 {
-    if (line->statement_type == EMPTY || line->statement_type == COMMENT)
-    {
-        return;
-    }
-
     if (line->operands_count == 0)
     {
         sprintf(line->error_message, NO_OPERANDS_FOUND);
