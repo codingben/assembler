@@ -30,7 +30,7 @@ int main(int argument_count, char **argument_vector)
     {
         const char *file_name = argument_vector[i];
         LinkedSymbol *linked_symbol = NULL;
-        LinkedLine *analyzed = NULL;
+        LinkedLine *linked_line = NULL;
         int validated = FALSE;
         int parsed = FALSE;
         int compiled = FALSE;
@@ -52,9 +52,9 @@ int main(int argument_count, char **argument_vector)
         }
 
         /* Reading the assembly source code. */
-        analyzed = analyze(file_name);
+        linked_line = analyze(file_name);
 
-        if (analyzed == NULL)
+        if (linked_line == NULL)
         {
             printf(ERROR_FORMAT, file_name, FAILED_ANALYZE_FILE);
             continue;
@@ -69,7 +69,7 @@ int main(int argument_count, char **argument_vector)
             continue;
         }
 
-        parsed = parse(file_name, analyzed, linked_symbol);
+        parsed = parse(file_name, linked_line, linked_symbol);
 
         if (parsed)
         {
@@ -86,8 +86,8 @@ int main(int argument_count, char **argument_vector)
             /* TODO: Build object file (and other files if needed) */
         }
 
-        /* Free saved lines. */
-        delete_linked_line(analyzed);
+        delete_linked_line(linked_line);
+        delete_linked_symbol(linked_symbol);
     }
 
     return EXIT_SUCCESS;
