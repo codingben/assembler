@@ -61,6 +61,7 @@ static const Directive directives[DIRECTIVES_SIZE] = {
 
 typedef enum
 {
+    UNKNOWN,
     EMPTY,
     COMMENT,
     COMMAND,
