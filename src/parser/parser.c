@@ -30,23 +30,28 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
     Line *line = linked_line->head;
     int parsed = FALSE;
 
+    /* First pass, parse all labels. */
     for (; line != NULL; line = line->next)
     {
-        /* Parsing the syntax and setting the relevant data (e.g. operands). */
         parsed = parse_labels(line, linked_symbol);
-        parse_operands(line, linked_symbol);
+    }
 
-        /* Validating the parsed line by known rules (e.g. only $0 operand for `call`). */
-        validate_parsed_line(line);
+    line = linked_line->head;
+
+    /* Second pass, parse all commands, directives, and operands. */
+    for (; line != NULL; line = line->next)
+    {
+        if (parsed)
+        {
+            parse_operands(line, linked_symbol);
+
+            /* Validating the parsed line by known rules (e.g. only $0 operand for `call`). */
+            /* validate_parsed_line(line); */
+        }
 
         /* Display error that found in the line after parsing and validating the line. */
         display_line_error(file_name, line);
     }
-
-    /* First need add all the labels to symbol table, and then parse the operands :) */
-    /* Need to loops because ABC exists, but in after line */
-    /* move $1, ABC*/
-    /* ABC: yo*/
 
     return parsed;
 }
@@ -189,15 +194,25 @@ void parse_operands(Line *line, LinkedSymbol *linked_symbol)
 
             memcpy(line->directive, token, strlen(token) + 1);
         }
-        else
+        else if (is_label(token) == FALSE)
         {
+            /* Don't parse labels. */
+
             if (line->statement_type == COMMAND)
             {
-                parse_command_operand(line, token, linked_symbol);
+                /* We don't want to parse "add $1, $2" but only "$1, $2" operands. */
+                if (is_command(token) == FALSE)
+                {
+                    parse_command_operand(line, token, linked_symbol);
+                }
             }
             else if (line->statement_type == DIRECTIVE)
             {
-                parse_directive_operand(line, token, linked_symbol);
+                /* We don't want to parse ".db 5, -10" but only "5, -10" operands. */
+                if (is_directive(token) == FALSE)
+                {
+                    parse_directive_operand(line, token, linked_symbol);
+                }
             }
         }
 
@@ -262,11 +277,10 @@ void validate_parsed_line(Line *line)
         return;
     }
 
-    /*if (line->operands_count == 0)
+    if (line->operands_count == 0)
     {
-        line->has_error = TRUE;
         sprintf(line->error_message, NO_OPERANDS_FOUND);
-    }*/
+    }
 
     /* TODO: Iterate -> jmp, la, call, stop only one register (call only $0 register) */
     /* TODO: Do I J table */
