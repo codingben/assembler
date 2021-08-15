@@ -13,13 +13,15 @@ int parse_labels(Line *line, LinkedSymbol *linked_symbol);
 
 int parse_label(Line *line, char *label);
 
-void parse_operands(Line *line, LinkedSymbol *linked_symbol);
+int parse_instructions(Line *line, LinkedSymbol *linked_symbol);
+
+int parse_operands(Line *line, LinkedSymbol *linked_symbol);
 
 void parse_command_operand(Line *line, char *operand, LinkedSymbol *linked_symbol);
 
 void parse_directive_operand(Line *line, char *operand, LinkedSymbol *linked_symbol);
 
-void validate_parsed_line(Line *line);
+void validate_parsed_operands(Line *line, LinkedSymbol *linked_symbol);
 
 void display_line_error(const char *file_name, Line *line);
 
@@ -30,7 +32,7 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
     Line *line = linked_line->head;
     int parsed = FALSE;
 
-    /* First pass, parse all labels. */
+    /* First pass, parse all labels (for symbol table). */
     for (; line != NULL; line = line->next)
     {
         if (is_empty_line(line->text))
@@ -38,35 +40,40 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
             line->statement_type = EMPTY;
             continue;
         }
-        else if (is_comment_line(line->text))
+
+        if (is_comment_line(line->text))
         {
             line->statement_type = COMMENT;
             continue;
         }
 
         parsed = parse_labels(line, linked_symbol);
+
+        display_line_error(file_name, line);
     }
 
-    line = linked_line->head;
-
-    /* Second pass, parse all commands, directives, and operands. */
-    for (; line != NULL; line = line->next)
+    if (parsed)
     {
-        if (line->statement_type == EMPTY || line->statement_type == COMMENT)
+        line = linked_line->head;
+
+        /* Second pass, parse all instructions and operands. */
+        for (; line != NULL; line = line->next)
         {
-            continue;
+            if (line->statement_type == EMPTY || line->statement_type == COMMENT)
+            {
+                continue;
+            }
+
+            if (parse_instructions(line, linked_symbol))
+            {
+                if (parse_operands(line, linked_symbol))
+                {
+                    validate_parsed_operands(line, linked_symbol);
+                }
+            }
+
+            display_line_error(file_name, line);
         }
-
-        if (parsed)
-        {
-            parse_operands(line, linked_symbol);
-
-            /* Validating the parsed line by known rules (e.g. only $0 operand for `call`). */
-            validate_parsed_line(line);
-        }
-
-        /* Display error that found in the line after parsing and validating the line. */
-        display_line_error(file_name, line);
     }
 
     return parsed;
@@ -97,6 +104,7 @@ int parse_labels(Line *line, LinkedSymbol *linked_symbol)
         /* Remove '\n' from lines like: "END: stop\n". */
         remove_new_line_character(token);
 
+        /* TODO: `.extern` is not defined as label here */
         if (is_label(token))
         {
             if (parse_label(line, token))
@@ -151,7 +159,7 @@ int parse_label(Line *line, char *label)
     return FALSE;
 }
 
-void parse_operands(Line *line, LinkedSymbol *linked_symbol)
+int parse_instructions(Line *line, LinkedSymbol *linked_symbol)
 {
     /* Breaking this line into words (tokens). */
     char delimeter[] = " ,";
@@ -160,7 +168,7 @@ void parse_operands(Line *line, LinkedSymbol *linked_symbol)
 
     if (duplicated_line == NULL)
     {
-        return;
+        return FALSE;
     }
 
     token = strtok(duplicated_line, delimeter);
@@ -168,7 +176,7 @@ void parse_operands(Line *line, LinkedSymbol *linked_symbol)
     if (token == NULL)
     {
         free(duplicated_line);
-        return;
+        return FALSE;
     }
 
     while (token != NULL)
@@ -188,13 +196,51 @@ void parse_operands(Line *line, LinkedSymbol *linked_symbol)
 
             memcpy(line->directive, token, strlen(token) + 1);
         }
-        else if (is_label(token) == FALSE)
-        {
-            /* Don't parse labels. */
 
+        token = strtok(NULL, delimeter);
+    }
+
+    if (line->statement_type == UNKNOWN)
+    {
+        strcpy(line->error_message, NO_INSTRUCTION_FOUND);
+        return FALSE;
+    }
+
+    free(duplicated_line);
+    return TRUE;
+}
+
+int parse_operands(Line *line, LinkedSymbol *linked_symbol)
+{
+    /* Breaking this line into words (tokens). */
+    char delimeter[] = " ,";
+    char *duplicated_line = duplicate(line->text);
+    char *token = NULL;
+
+    if (duplicated_line == NULL)
+    {
+        return FALSE;
+    }
+
+    token = strtok(duplicated_line, delimeter);
+
+    if (token == NULL)
+    {
+        free(duplicated_line);
+        return FALSE;
+    }
+
+    while (token != NULL)
+    {
+        /* Remove '\n' from lines like: "END: stop\n". */
+        remove_new_line_character(token);
+
+        /* Don't parse labels. */
+        if (is_label(token) == FALSE)
+        {
             if (line->statement_type == COMMAND)
             {
-                /* We don't want to parse "add $1, $2" but only "$1, $2" operands. */
+                /* Don't parse "add $1, $2" but only "$1, $2" operands. */
                 if (is_command(token) == FALSE)
                 {
                     parse_command_operand(line, token, linked_symbol);
@@ -202,7 +248,7 @@ void parse_operands(Line *line, LinkedSymbol *linked_symbol)
             }
             else if (line->statement_type == DIRECTIVE)
             {
-                /* We don't want to parse ".db 5, -10" but only "5, -10" operands. */
+                /* Don't parse ".db 5, -10" but only "5, -10" operands. */
                 if (is_directive(token) == FALSE)
                 {
                     parse_directive_operand(line, token, linked_symbol);
@@ -214,6 +260,7 @@ void parse_operands(Line *line, LinkedSymbol *linked_symbol)
     }
 
     free(duplicated_line);
+    return TRUE;
 }
 
 void parse_command_operand(Line *line, char *operand, LinkedSymbol *linked_symbol)
@@ -264,29 +311,38 @@ void parse_directive_operand(Line *line, char *operand, LinkedSymbol *linked_sym
     }
 }
 
-void validate_parsed_line(Line *line)
+void validate_parsed_operands(Line *line, LinkedSymbol *linked_symbol)
 {
     if (line->operands_count == 0)
     {
+        if (strcmp(line->command, "stop") == 0)
+        {
+            return;
+        }
+
         sprintf(line->error_message, NO_OPERANDS_FOUND);
     }
-
-    /* TODO: Iterate -> jmp, la, call, stop only one register (call only $0 register) */
-    /* TODO: Do I J table */
-    if (strcmp(line->command, "call") == 0)
+    else
     {
-        /* BUG: It'll be 0 because `vall` isn't recognized as an operand */
-        /* TODO: Symbol table to fix it */
-        if (line->operands_count == 1)
+        if (strcmp(line->command, "call") == 0 || strcmp(line->command, "la") == 0)
         {
-            if (strcmp(line->operands[0], "$0") != 0)
+            int i;
+
+            for (i = 0; i < line->operands_count; i++)
             {
-                strcpy(line->error_message, ONLY_ZERO_OPERAND);
+                char *label = line->operands[i];
+
+                if (label[0] == '\0')
+                {
+                    label = "(NULL)";
+                }
+
+                /* For `call` and `la` only label can be defined. */
+                if (symbol_exists(linked_symbol, label) == FALSE)
+                {
+                    sprintf(line->error_message, NO_LABEL_DEFINED, label);
+                }
             }
-        }
-        else
-        {
-            strcpy(line->error_message, ONLY_ONE_OPERAND);
         }
     }
 }
