@@ -33,6 +33,17 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
     /* First pass, parse all labels. */
     for (; line != NULL; line = line->next)
     {
+        if (is_empty_line(line->text))
+        {
+            line->statement_type = EMPTY;
+            continue;
+        }
+        else if (is_comment_line(line->text))
+        {
+            line->statement_type = COMMENT;
+            continue;
+        }
+
         parsed = parse_labels(line, linked_symbol);
     }
 
@@ -41,6 +52,11 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
     /* Second pass, parse all commands, directives, and operands. */
     for (; line != NULL; line = line->next)
     {
+        if (line->statement_type == EMPTY || line->statement_type == COMMENT)
+        {
+            continue;
+        }
+
         if (parsed)
         {
             parse_operands(line, linked_symbol);
@@ -78,17 +94,6 @@ int parse_labels(Line *line, LinkedSymbol *linked_symbol)
 
     while (token != NULL)
     {
-        if (is_empty_line(token))
-        {
-            line->statement_type = EMPTY;
-            break;
-        }
-        else if (is_comment_line(token))
-        {
-            line->statement_type = COMMENT;
-            break;
-        }
-
         /* Remove '\n' from lines like: "END: stop\n". */
         remove_new_line_character(token);
 
@@ -168,17 +173,6 @@ void parse_operands(Line *line, LinkedSymbol *linked_symbol)
 
     while (token != NULL)
     {
-        if (is_empty_line(token))
-        {
-            line->statement_type = EMPTY;
-            break;
-        }
-        else if (is_comment_line(token))
-        {
-            line->statement_type = COMMENT;
-            break;
-        }
-
         /* Remove '\n' from lines like: "END: stop\n". */
         remove_new_line_character(token);
 
