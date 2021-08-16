@@ -9,7 +9,7 @@
 #include "../utils/line_helper.h"
 #include "../symbol/symbol.h"
 
-int parse_labels(Line *line, LinkedSymbol *linked_symbol);
+int parse_symbols(Line *line, LinkedSymbol *linked_symbol);
 
 int parse_label(Line *line, char *label);
 
@@ -32,7 +32,7 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
     Line *line = linked_line->head;
     int parsed = FALSE;
 
-    /* First pass, parse all labels (for symbol table). */
+    /* First pass, parse all symbols (for symbol table). */
     for (; line != NULL; line = line->next)
     {
         if (is_empty_line(line->text))
@@ -47,7 +47,7 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
             continue;
         }
 
-        parsed = parse_labels(line, linked_symbol);
+        parsed = parse_symbols(line, linked_symbol);
 
         display_line_error(file_name, line);
     }
@@ -79,7 +79,7 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
     return parsed;
 }
 
-int parse_labels(Line *line, LinkedSymbol *linked_symbol)
+int parse_symbols(Line *line, LinkedSymbol *linked_symbol)
 {
     /* Breaking this line into words (tokens). */
     char delimeter[] = " ,";
@@ -104,7 +104,6 @@ int parse_labels(Line *line, LinkedSymbol *linked_symbol)
         /* Remove '\n' from lines like: "END: stop\n". */
         remove_new_line_character(token);
 
-        /* TODO: `.extern` is not defined as label here */
         if (is_label(token))
         {
             if (parse_label(line, token))
@@ -121,6 +120,29 @@ int parse_labels(Line *line, LinkedSymbol *linked_symbol)
                     }
 
                     free(label);
+                }
+            }
+        }
+
+        /* Example scenario below in comments: */
+        /* Line to parse: .extern vall */
+        /* Token: .extern */
+        if (is_extern(token))
+        {
+            line->statement_type = DIRECTIVE;
+
+            memcpy(line->directive, token, strlen(token) + 1);
+        }
+        else if (line->statement_type == DIRECTIVE)
+        {
+            /* Token: vall */
+            if (symbol_exists(linked_symbol, token) == FALSE)
+            {
+                Symbol *symbol = add_symbol(linked_symbol);
+
+                if (symbol != NULL)
+                {
+                    memcpy(symbol->label, token, strlen(token) + 1);
                 }
             }
         }
