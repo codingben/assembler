@@ -116,7 +116,7 @@ int parse_symbols(Line *line, LinkedSymbol *linked_symbol)
 
                     if (label != NULL)
                     {
-                        memcpy(symbol->label, label, strlen(label) + 1);
+                        memcpy(symbol->name, label, strlen(label) + 1);
                     }
 
                     free(label);
@@ -142,7 +142,7 @@ int parse_symbols(Line *line, LinkedSymbol *linked_symbol)
 
                 if (symbol != NULL)
                 {
-                    memcpy(symbol->label, token, strlen(token) + 1);
+                    memcpy(symbol->name, token, strlen(token) + 1);
                 }
             }
         }

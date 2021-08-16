@@ -5,7 +5,7 @@
 
 typedef struct symbol
 {
-    char label[LABEL_LENGTH];
+    char name[LABEL_LENGTH];
     struct symbol *next;
 } Symbol;
 
@@ -20,7 +20,7 @@ LinkedSymbol *create_linked_symbol();
 
 Symbol *add_symbol(LinkedSymbol *linked_symbol);
 
-int symbol_exists(LinkedSymbol *linked_symbol, char *label);
+int symbol_exists(LinkedSymbol *linked_symbol, char *name);
 
 void delete_linked_symbol(LinkedSymbol *linked_symbol);
 

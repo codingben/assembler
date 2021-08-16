@@ -62,13 +62,13 @@ Symbol *add_symbol(LinkedSymbol *linked_symbol)
     return symbol;
 }
 
-int symbol_exists(LinkedSymbol *linked_symbol, char *label)
+int symbol_exists(LinkedSymbol *linked_symbol, char *name)
 {
     Symbol *symbol = linked_symbol->head;
 
     for (; symbol != NULL; symbol = symbol->next)
     {
-        if (strcmp(symbol->label, label) == 0)
+        if (strcmp(symbol->name, name) == 0)
         {
             return TRUE;
         }
