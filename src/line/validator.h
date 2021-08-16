@@ -27,4 +27,6 @@ int is_register_exists(char *value);
 
 int is_quotation_mark(char *value);
 
+int is_extern(char *value);
+
 #endif

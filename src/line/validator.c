@@ -139,3 +139,8 @@ int is_quotation_mark(char *value)
 {
     return value[0] == '"' && value[strlen(value) - 1] == '"';
 }
+
+int is_extern(char *value)
+{
+    return strcmp(".extern", value) == 0 ? TRUE : FALSE;
+}
