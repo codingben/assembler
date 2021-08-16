@@ -1,11 +1,11 @@
 #ifndef SYMBOL_H
 #define SYMBOL_H
 
-#define LABEL_LENGTH 31
+#define NAME_LENGTH 31
 
 typedef struct symbol
 {
-    char name[LABEL_LENGTH];
+    char name[NAME_LENGTH];
     struct symbol *next;
 } Symbol;
 
