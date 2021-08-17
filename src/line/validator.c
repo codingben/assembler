@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "../constants/boolean.h"
 #include "line.h"
+#include "../constants/boolean.h"
+#include "../utils/line_helper.h"
 
 int is_empty_line(char *value)
 {
@@ -38,11 +39,14 @@ int is_label_above_max_length(char *value)
 int is_label_equals_command(char *value)
 {
     int i = 0;
+    char *temp = duplicate(value);
+
+    temp = remove_last_character(temp);
 
     for (i = 0; i < COMMANDS_SIZE; i++)
     {
         /* Compare given value with known commands. */
-        if (strcmp(commands[i].name, value) == 0)
+        if (strcmp(commands[i].name, temp) == 0)
         {
             return TRUE;
         }
