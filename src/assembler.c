@@ -11,8 +11,8 @@
 #include "parser/parser.h"
 #include "symbol/symbol.h"
 
-#define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
 #define DEFAULT_ARG_COUNT 2
 
 int main(int argument_count, char **argument_vector)
@@ -42,6 +42,8 @@ int main(int argument_count, char **argument_vector)
          * 4. if (compiled) build 
          */
 
+        printf("# Validating File: %s\n", file_name);
+
         /* Check if the assembly file has ".as" extension. */
         validated = validate_extension(file_name);
 
@@ -50,6 +52,8 @@ int main(int argument_count, char **argument_vector)
             printf(ERROR_FORMAT, file_name, NO_AS_EXTENSION);
             continue;
         }
+
+        printf("# Analyzing File: %s\n", file_name);
 
         /* Reading the assembly source code. */
         linked_line = analyze(file_name);
@@ -68,6 +72,8 @@ int main(int argument_count, char **argument_vector)
             printf(ERROR_FORMAT, file_name, FAILED_ANALYZE_FILE);
             continue;
         }
+
+        printf("# Parsing File: %s\n", file_name);
 
         parsed = parse(file_name, linked_line, linked_symbol);
 
