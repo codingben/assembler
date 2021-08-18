@@ -33,13 +33,13 @@ int main(int argument_count, char **argument_vector)
         LinkedLine *linked_line = NULL;
         int validated = FALSE;
         int parsed = FALSE;
-        int compiled = FALSE;
+        int translated = FALSE;
 
         /* Steps:
          * 1. if (validated) analyze (scanner)
          * 2. if (analyzed) parse
-         * 3. if (parsed) compile
-         * 4. if (compiled) build 
+         * 3. if (parsed) translate
+         * 4. if (translated) build 
          */
 
         printf("# Validating File: %s\n", file_name);
@@ -87,7 +87,7 @@ int main(int argument_count, char **argument_vector)
             continue;
         }
 
-        if (compiled)
+        if (translated)
         {
             /* TODO: Build object file (and other files if needed) */
         }
