@@ -8,7 +8,7 @@ typedef enum
     CODE,
     DATA,
     ENTRY,
-    EXTERNAL,
+    EXTERNAL
 } symbol_type;
 
 typedef struct symbol
