@@ -53,15 +53,15 @@ typedef struct
 
 static const Directive directives[DIRECTIVES_SIZE] = {
     {".db"},
-    {".dw"},
     {".dh"},
+    {".dw"},
     {".asciz"},
     {".entry"},
     {".extern"}};
 
 typedef enum
 {
-    UNKNOWN,
+    UNKNOWN_STATEMENT,
     EMPTY,
     COMMENT,
     COMMAND,
