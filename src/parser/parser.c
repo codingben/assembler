@@ -417,7 +417,7 @@ void validate_parsed_operands(Line *line, LinkedSymbol *linked_symbol)
 
 void display_line_error(const char *file_name, Line *line)
 {
-    if (strlen(line->error_message) != 0)
+    if (is_error_message_empty(line->error_message) == FALSE)
     {
         printf(ERROR_LINE_FORMAT, file_name, line->line_number, line->error_message);
     }

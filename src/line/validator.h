@@ -5,6 +5,8 @@ int is_empty_line(char *value);
 
 int is_comment_line(char *value);
 
+int is_error_message_empty(char *value);
+
 int is_label(char *value);
 
 int is_label_empty(char *value);

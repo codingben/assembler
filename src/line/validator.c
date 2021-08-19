@@ -20,6 +20,11 @@ int is_comment_line(char *value)
     return value[0] == ';' ? TRUE : FALSE;
 }
 
+int is_error_message_empty(char *value)
+{
+    return strlen(value) == 0 ? TRUE : FALSE;
+}
+
 int is_label(char *value)
 {
     return value[strlen(value) - 1] == ':' ? TRUE : FALSE;
