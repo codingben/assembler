@@ -9,8 +9,6 @@
 #include "../utils/line_helper.h"
 #include "../symbol/symbol.h"
 
-#define IC_DEFAULT_VALUE 100
-
 int parse_symbols(Line *line, LinkedSymbol *linked_symbol);
 
 int parse_label(Line *line, char *label);
@@ -23,19 +21,26 @@ void parse_command_operand(Line *line, char *operand, LinkedSymbol *linked_symbo
 
 void parse_directive_operand(Line *line, char *operand, LinkedSymbol *linked_symbol);
 
+void parse_symbol_type(Line *line, char *operand, LinkedSymbol *linked_symbol);
+
 void validate_parsed_operands(Line *line, LinkedSymbol *linked_symbol);
 
 void display_line_error(const char *file_name, Line *line);
 
 void append_parsed_operand(Line *line, char *operand);
 
+void update_symbol_value(Line *line, LinkedSymbol *linked_symbol);
+
+void update_instruction_counter(Line *line);
+
+/* IC */
+int instruction_counter = 100;
+int data_counter = 0;
+
 int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_symbol)
 {
     Line *line = linked_line->head;
     int parsed = FALSE;
-
-    /* IC */
-    int instruction_counter = IC_DEFAULT_VALUE;
 
     /* First pass, parse all symbols (for symbol table). */
     for (; line != NULL; line = line->next)
@@ -71,6 +76,9 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
 
             if (parse_instructions(line, linked_symbol))
             {
+                update_symbol_value(line, linked_symbol);
+                update_instruction_counter(line);
+
                 if (parse_operands(line, linked_symbol))
                 {
                     validate_parsed_operands(line, linked_symbol);
@@ -80,6 +88,8 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
             display_line_error(file_name, line);
         }
     }
+
+    printf("IC: %d\n", instruction_counter);
 
     return parsed;
 }
@@ -430,4 +440,38 @@ void append_parsed_operand(Line *line, char *operand)
     strcpy(line->operands[count], operand);
 
     line->operands_count = count + 1;
+}
+
+void update_symbol_value(Line *line, LinkedSymbol *linked_symbol)
+{
+    if (is_label_empty(line->label) == FALSE)
+    {
+        char *temp = duplicate(line->label);
+        temp = remove_last_character(temp);
+
+        set_symbol_value(linked_symbol, temp, instruction_counter);
+    }
+}
+
+void update_instruction_counter(Line *line)
+{
+    if (line->statement_type == COMMAND)
+    {
+        instruction_counter += 4;
+    }
+    else if (line->statement_type == DIRECTIVE)
+    {
+        if (is_db(line->directive))
+        {
+            instruction_counter += 1;
+        }
+        else if (is_dh(line->directive))
+        {
+            instruction_counter += 2;
+        }
+        else
+        {
+            instruction_counter += 4;
+        }
+    }
 }
