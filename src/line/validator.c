@@ -32,7 +32,7 @@ int is_label(char *value)
 
 int is_label_empty(char *value)
 {
-    return strlen(value) == 1 ? TRUE : FALSE;
+    return strlen(value) == 0 ? TRUE : FALSE;
 }
 
 int is_label_above_max_length(char *value)
