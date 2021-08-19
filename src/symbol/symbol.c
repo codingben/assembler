@@ -12,6 +12,7 @@ Symbol *create_symbol()
         return NULL;
     }
 
+    symbol->symbol_type = CODE;
     symbol->next = NULL;
     return symbol;
 }
@@ -60,6 +61,35 @@ Symbol *add_symbol(LinkedSymbol *linked_symbol)
     }
 
     return symbol;
+}
+
+void set_symbol_type(LinkedSymbol *linked_symbol, char *name, symbol_type type)
+{
+    Symbol *symbol = linked_symbol->head;
+
+    for (; symbol != NULL; symbol = symbol->next)
+    {
+        if (strcmp(symbol->name, name) == 0)
+        {
+            symbol->symbol_type = type;
+            break;
+        }
+    }
+}
+
+symbol_type get_symbol_type(LinkedSymbol *linked_symbol, char *name)
+{
+    Symbol *symbol = linked_symbol->head;
+
+    for (; symbol != NULL; symbol = symbol->next)
+    {
+        if (strcmp(symbol->name, name) == 0)
+        {
+            return symbol->symbol_type;
+        }
+    }
+
+    return DATA;
 }
 
 int symbol_exists(LinkedSymbol *linked_symbol, char *name)

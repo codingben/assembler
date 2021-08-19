@@ -29,4 +29,14 @@ int is_quotation_mark(char *value);
 
 int is_extern(char *value);
 
+int is_entry(char *value);
+
+int is_asciz(char *value);
+
+int is_db(char *value);
+
+int is_dh(char *value);
+
+int is_dw(char *value);
+
 #endif

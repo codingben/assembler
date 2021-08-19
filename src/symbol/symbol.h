@@ -3,9 +3,19 @@
 
 #define NAME_LENGTH 31
 
+typedef enum
+{
+    CODE,
+    DATA,
+    ENTRY,
+    EXTERNAL,
+} symbol_type;
+
 typedef struct symbol
 {
     char name[NAME_LENGTH];
+    unsigned int address;
+    symbol_type symbol_type;
     struct symbol *next;
 } Symbol;
 
@@ -19,6 +29,10 @@ Symbol *create_symbol();
 LinkedSymbol *create_linked_symbol();
 
 Symbol *add_symbol(LinkedSymbol *linked_symbol);
+
+void set_symbol_type(LinkedSymbol *linked_symbol, char *name, symbol_type type);
+
+symbol_type get_symbol_type(LinkedSymbol *linked_symbol, char *name);
 
 int symbol_exists(LinkedSymbol *linked_symbol, char *name);
 

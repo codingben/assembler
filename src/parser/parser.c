@@ -9,6 +9,8 @@
 #include "../utils/line_helper.h"
 #include "../symbol/symbol.h"
 
+#define IC_DEFAULT_VALUE 100
+
 int parse_symbols(Line *line, LinkedSymbol *linked_symbol);
 
 int parse_label(Line *line, char *label);
@@ -31,6 +33,9 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
 {
     Line *line = linked_line->head;
     int parsed = FALSE;
+
+    /* IC */
+    int instruction_counter = IC_DEFAULT_VALUE;
 
     /* First pass, parse all symbols (for symbol table). */
     for (; line != NULL; line = line->next)
@@ -222,7 +227,7 @@ int parse_instructions(Line *line, LinkedSymbol *linked_symbol)
         token = strtok(NULL, delimeter);
     }
 
-    if (line->statement_type == UNKNOWN)
+    if (line->statement_type == UNKNOWN_STATEMENT)
     {
         strcpy(line->error_message, NO_INSTRUCTION_FOUND);
         return FALSE;
@@ -275,6 +280,8 @@ int parse_operands(Line *line, LinkedSymbol *linked_symbol)
                 {
                     parse_directive_operand(line, token, linked_symbol);
                 }
+
+                parse_symbol_type(line, token, linked_symbol);
             }
         }
 
@@ -330,6 +337,45 @@ void parse_directive_operand(Line *line, char *operand, LinkedSymbol *linked_sym
     else
     {
         sprintf(line->error_message, INVALID_DEFINITION, operand);
+    }
+}
+
+void parse_symbol_type(Line *line, char *operand, LinkedSymbol *linked_symbol)
+{
+    if (is_entry(line->directive))
+    {
+        set_symbol_type(linked_symbol, operand, ENTRY);
+    }
+    else if (is_extern(line->directive))
+    {
+        set_symbol_type(linked_symbol, operand, EXTERNAL);
+    }
+    else if (is_label_empty(line->label) == FALSE)
+    {
+        char *temp = duplicate(line->label);
+        temp = remove_last_character(temp);
+
+        if (get_symbol_type(linked_symbol, temp) == CODE)
+        {
+            if (is_asciz(line->directive))
+            {
+                set_symbol_type(linked_symbol, temp, DATA);
+            }
+            else if (is_db(line->directive))
+            {
+                set_symbol_type(linked_symbol, temp, DATA);
+            }
+            else if (is_dh(line->directive))
+            {
+                set_symbol_type(linked_symbol, temp, DATA);
+            }
+            else if (is_dw(line->directive))
+            {
+                set_symbol_type(linked_symbol, temp, DATA);
+            }
+        }
+
+        free(temp);
     }
 }
 

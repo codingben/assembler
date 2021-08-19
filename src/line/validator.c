@@ -148,3 +148,28 @@ int is_extern(char *value)
 {
     return strcmp(".extern", value) == 0 ? TRUE : FALSE;
 }
+
+int is_entry(char *value)
+{
+    return strcmp(".entry", value) == 0 ? TRUE : FALSE;
+}
+
+int is_asciz(char *value)
+{
+    return strcmp(".asciz", value) == 0 ? TRUE : FALSE;
+}
+
+int is_db(char *value)
+{
+    return strcmp(".db", value) == 0 ? TRUE : FALSE;
+}
+
+int is_dh(char *value)
+{
+    return strcmp(".dh", value) == 0 ? TRUE : FALSE;
+}
+
+int is_dw(char *value)
+{
+    return strcmp(".dw", value) == 0 ? TRUE : FALSE;
+}
