@@ -13,6 +13,7 @@ Symbol *create_symbol()
     }
 
     symbol->symbol_type = CODE;
+    symbol->value = 0;
     symbol->next = NULL;
     return symbol;
 }
