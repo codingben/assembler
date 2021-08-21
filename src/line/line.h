@@ -23,8 +23,8 @@ typedef struct
 {
     char name[MAX_COMMAND_LENGTH];
     command_type command_type;
-    unsigned int funct;
-    unsigned int opcode;
+    int funct;
+    int opcode;
 } Command;
 
 static const Command commands[COMMANDS_SIZE] = {
