@@ -50,7 +50,6 @@ int is_label_equals_command(char *value)
 
     for (i = 0; i < COMMANDS_SIZE; i++)
     {
-        /* Compare given value with known commands. */
         if (strcmp(commands[i].name, temp) == 0)
         {
             return TRUE;
@@ -67,7 +66,6 @@ int is_label_equals_directive(char *value)
 
     for (i = 0; i < DIRECTIVES_SIZE; i++)
     {
-        /* Compare given value with known commands. */
         if (strcmp(directives[i].name, value) == 0)
         {
             return TRUE;
@@ -83,7 +81,6 @@ int is_command(char *value)
 
     for (i = 0; i < COMMANDS_SIZE; i++)
     {
-        /* Compare given value with known commands. */
         if (strcmp(commands[i].name, value) == 0)
         {
             return TRUE;
@@ -99,7 +96,6 @@ int is_directive(char *value)
 
     for (i = 0; i < DIRECTIVES_SIZE; i++)
     {
-        /* Compare given value with known commands. */
         if (strcmp(directives[i].name, value) == 0)
         {
             return TRUE;
@@ -134,7 +130,6 @@ int is_register_exists(char *value)
 
     for (i = 0; i < REGISTER_SIZE; i++)
     {
-        /* Compare given value with known registers. */
         if (strcmp(registers[i].name, value) == 0)
         {
             return TRUE;

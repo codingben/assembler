@@ -73,7 +73,6 @@ int find_register(char *value)
 
     for (i = 0; i < REGISTER_SIZE; i++)
     {
-        /* Compare given value with known registers. */
         if (strcmp(registers[i].name, value) == 0)
         {
             return registers[i].number;
@@ -89,7 +88,6 @@ instruction_type find_type(char *name)
 
     for (i = 0; i < COMMANDS_SIZE; i++)
     {
-        /* Compare given value with known commands. */
         if (strcmp(commands[i].name, name) == 0)
         {
             return commands[i].instruction_type;
@@ -105,7 +103,6 @@ int find_funct(char *name)
 
     for (i = 0; i < COMMANDS_SIZE; i++)
     {
-        /* Compare given value with known commands. */
         if (strcmp(commands[i].name, name) == 0)
         {
             return commands[i].funct;
@@ -121,7 +118,6 @@ int find_opcode(char *name)
 
     for (i = 0; i < COMMANDS_SIZE; i++)
     {
-        /* Compare given value with known commands. */
         if (strcmp(commands[i].name, name) == 0)
         {
             return commands[i].opcode;
