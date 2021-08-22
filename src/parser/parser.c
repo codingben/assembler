@@ -50,8 +50,7 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
             line->statement_type = EMPTY;
             continue;
         }
-
-        if (is_comment_line(line->text))
+        else if (is_comment_line(line->text))
         {
             line->statement_type = COMMENT;
             continue;
