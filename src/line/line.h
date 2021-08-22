@@ -12,17 +12,42 @@
 #define REGISTER_SIZE 32
 #define MAX_OPERANDS_SIZE 80
 
+typedef struct
+{
+    unsigned int opcode : 6;
+    unsigned int rs : 5;
+    unsigned int rt : 5;
+    unsigned int rd : 5;
+    unsigned int funct : 5;
+    unsigned int unused : 6;
+} R_Instruction;
+
+typedef struct
+{
+    unsigned int opcode : 6;
+    unsigned int rs : 5;
+    unsigned int rt : 5;
+    unsigned int immed : 16;
+} I_Instruction;
+
+typedef struct
+{
+    unsigned int opcode : 6;
+    unsigned int reg : 1;
+    unsigned int address : 25;
+} J_Instruction;
+
 typedef enum
 {
     R,
     I,
-    J,
-} command_type;
+    J
+} instruction_type;
 
 typedef struct
 {
     char name[MAX_COMMAND_LENGTH];
-    command_type command_type;
+    instruction_type instruction_type;
     int funct;
     int opcode;
 } Command;
@@ -74,7 +99,7 @@ typedef enum
     UNKNOWN_STATEMENT,
     EMPTY,
     COMMENT,
-    COMMAND,
+    COMMAND, /* Rename it to opcode (or something else) */
     DIRECTIVE
 } statement_type;
 
@@ -125,10 +150,14 @@ typedef struct line
     char error_message[ERROR_MAX_LINE_LENGTH];
     statement_type statement_type;
     char label[MAX_LABEL_LENGTH];
-    char command[MAX_COMMAND_LENGTH];
-    char directive[MAX_DIRECTIVE_LENGTH];
+    char command[MAX_COMMAND_LENGTH];     /* remove it and make instruction only */
+    char directive[MAX_DIRECTIVE_LENGTH]; /* remove it and make instruction only */
     char operands[MAX_OPERANDS_SIZE][MAX_OPERANDS_SIZE];
     int operands_count;
+    unsigned int address;
+    R_Instruction r_instruction;
+    I_Instruction i_instruction;
+    J_Instruction j_instruction;
     struct line *next;
 } Line;
 

@@ -34,7 +34,7 @@ void update_symbol_value(Line *line, LinkedSymbol *linked_symbol);
 void update_instruction_counter(Line *line);
 
 /* IC */
-int instruction_counter = 100;
+int instruction_counter = 100; /* TODO: Make this local and make one ICF */
 int data_counter = 0;
 
 int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_symbol)
@@ -474,4 +474,6 @@ void update_instruction_counter(Line *line)
             instruction_counter += 4;
         }
     }
+
+    line->address = instruction_counter;
 }
