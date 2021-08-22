@@ -11,4 +11,4 @@ echo "#---------------------------------------------------#"
 echo "# Run Assembler"
 echo "#---------------------------------------------------#"
 
-./bin/assembler ./tests/test.as
+./bin/assembler ./tests/ps.as
