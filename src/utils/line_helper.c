@@ -83,7 +83,7 @@ int find_register(char *value)
     return -1;
 }
 
-command_type find_command_type(char *name)
+instruction_type find_type(char *name)
 {
     int i = 0;
 
@@ -92,14 +92,14 @@ command_type find_command_type(char *name)
         /* Compare given value with known commands. */
         if (strcmp(commands[i].name, name) == 0)
         {
-            return commands[i].command_type;
+            return commands[i].instruction_type;
         }
     }
 
     return 0;
 }
 
-int find_command_funct(char *name)
+int find_funct(char *name)
 {
     int i = 0;
 
@@ -115,7 +115,7 @@ int find_command_funct(char *name)
     return 0;
 }
 
-int find_command_opcode(char *name)
+int find_opcode(char *name)
 {
     int i = 0;
 

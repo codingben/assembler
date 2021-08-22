@@ -15,10 +15,10 @@ char *remove_last_character(char *value);
 
 int find_register(char *value);
 
-command_type find_command_type(char *name);
+instruction_type find_type(char *name);
 
-int find_command_funct(char *name);
+int find_funct(char *name);
 
-int find_command_opcode(char *name);
+int find_opcode(char *name);
 
 #endif
