@@ -20,10 +20,11 @@ void translate_j_instruction(Line *line, LinkedSymbol *linked_symbol);
 int translate(LinkedLine *linked_line, LinkedSymbol *linked_symbol)
 {
     Line *line = linked_line->head;
-    instruction_type type;
 
     for (; line != NULL; line = line->next)
     {
+        instruction_type type;
+
         if (line->statement_type != COMMAND)
         {
             continue;
