@@ -11,6 +11,7 @@
 #include "parser/parser.h"
 #include "symbol/symbol.h"
 #include "translator/translator.h"
+#include "generator/generator.h"
 
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
@@ -41,10 +42,11 @@ int main(int argument_count, char **argument_vector)
          * 1. if (validated) analyze (scanner)
          * 2. if (analyzed) parse
          * 3. if (parsed) translate
-         * 4. if (translated) build 
+         * 4. if (translated) generate
          */
 
-        printf("# Validating File: %s\n", file_name);
+        printf("# File: %s\n", file_name);
+        printf("# Validating...\n");
 
         /* Check if the assembly file has ".as" extension. */
         validated = validate_extension(file_name);
@@ -55,7 +57,7 @@ int main(int argument_count, char **argument_vector)
             continue;
         }
 
-        printf("# Analyzing File: %s\n", file_name);
+        printf("# Analyzing...\n");
 
         /* Read the assembly source code. */
         linked_line = analyze(file_name);
@@ -68,21 +70,26 @@ int main(int argument_count, char **argument_vector)
 
         if (analyzed)
         {
-            printf("# Parsing File: %s\n", file_name);
+            printf("# Parsing...\n");
 
             /* Parse the syntax. */
             parsed = parse(file_name, linked_line, linked_symbol);
 
             if (parsed)
             {
-                printf("# Translating File: %s\n", file_name);
+                printf("# Translating...\n");
 
                 /* Translate the parsed syntax. */
                 translated = translate(linked_line, linked_symbol);
 
                 if (translated)
                 {
-                    printf("# Generate Output Files For: %s\n", file_name);
+                    printf("# Generating...\n");
+
+                    if (generate(linked_line))
+                    {
+                        printf("# Generated.\n");
+                    }
                 }
                 else
                 {
