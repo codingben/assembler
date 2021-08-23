@@ -41,4 +41,18 @@ int is_dh(char *value);
 
 int is_dw(char *value);
 
+int is_arthematic_logic_r_instructions(char *name);
+
+int is_copy_r_instructions(char *name);
+
+int is_arthematic_logic_i_instructions(char *name);
+
+int is_conditional_branching_i_instructions(char *name);
+
+int is_load_save_i_instructions(char *name);
+
+int is_stop_instruction(char *name);
+
+int is_j_instruction_except_stop(char *name);
+
 #endif

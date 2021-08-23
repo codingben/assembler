@@ -173,3 +173,70 @@ int is_dw(char *value)
 {
     return strcmp(".dw", value) == 0 ? TRUE : FALSE;
 }
+
+int is_arthematic_logic_r_instructions(char *name)
+{
+    int is_add = strcmp("add", name) == 0;
+    int is_sub = strcmp("sub", name) == 0;
+    int is_and = strcmp("and", name) == 0;
+    int is_or = strcmp("or", name) == 0;
+    int is_nor = strcmp("nor", name) == 0;
+
+    return is_add || is_sub || is_and || is_or || is_nor;
+}
+
+int is_copy_r_instructions(char *name)
+{
+    int is_move = strcmp("move", name) == 0;
+    int is_mvhi = strcmp("mvhi", name) == 0;
+    int is_mvlo = strcmp("mvlo", name) == 0;
+
+    return is_move || is_mvhi || is_mvlo;
+}
+
+int is_arthematic_logic_i_instructions(char *name)
+{
+    int is_addi = strcmp("addi", name) == 0;
+    int is_subi = strcmp("subi", name) == 0;
+    int is_andi = strcmp("andi", name) == 0;
+    int is_ori = strcmp("ori", name) == 0;
+    int is_nori = strcmp("nori", name) == 0;
+
+    return is_addi || is_subi || is_andi || is_ori || is_nori;
+}
+
+int is_conditional_branching_i_instructions(char *name)
+{
+    int is_beq = strcmp("beq", name) == 0;
+    int is_bne = strcmp("bne", name) == 0;
+    int is_blt = strcmp("blt", name) == 0;
+    int is_bgt = strcmp("bgt", name) == 0;
+
+    return is_beq || is_bne || is_blt || is_bgt;
+}
+
+int is_load_save_i_instructions(char *name)
+{
+    int is_lb = strcmp("lb", name) == 0;
+    int is_sb = strcmp("sb", name) == 0;
+    int is_lw = strcmp("lw", name) == 0;
+    int is_sw = strcmp("sw", name) == 0;
+    int is_lh = strcmp("lh", name) == 0;
+    int is_sh = strcmp("sh", name) == 0;
+
+    return is_lb || is_sb || is_lw || is_sw || is_lh || is_sh;
+}
+
+int is_stop_instruction(char *name)
+{
+    return strcmp("stop", name) == 0;
+}
+
+int is_j_instruction_except_stop(char *name)
+{
+    int is_jmp = strcmp("jmp", name) == 0;
+    int is_la = strcmp("la", name) == 0;
+    int is_call = strcmp("call", name) == 0;
+
+    return is_jmp || is_la || is_call;
+}
