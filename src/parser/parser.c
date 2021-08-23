@@ -390,9 +390,9 @@ void parse_symbol_type(Line *line, char *operand, LinkedSymbol *linked_symbol)
 
 void validate_parsed_operands(Line *line, LinkedSymbol *linked_symbol)
 {
-    if (line->operands_count == 0)
+    if (line->operands_count == 0) /* Throw an error for insturctions without operands. */
     {
-        if (strcmp(line->command, "stop") == 0)
+        if (is_stop_instruction(line->command)) /* Only `stop` instruction is without operands. */
         {
             return;
         }
@@ -401,25 +401,31 @@ void validate_parsed_operands(Line *line, LinkedSymbol *linked_symbol)
     }
     else
     {
-        if (strcmp(line->command, "call") == 0 || strcmp(line->command, "la") == 0)
+        if (is_j_instruction_except_stop(line->command)) /* jmp, la, call */
         {
-            int i;
-
-            for (i = 0; i < line->operands_count; i++)
+            if (line->operands_count > 1) /* Only one register or label. */
             {
-                char *label = line->operands[i];
+                sprintf(line->error_message, ONE_OPERAND_OR_LABEL);
+            }
+            else if (is_register(line->operands[0]) == FALSE) /* If it's not a register, then label? */
+            {
+                char *label = line->operands[0];
 
                 if (label[0] == '\0')
                 {
                     label = "(NULL)";
                 }
 
-                /* For `call` and `la` only label can be defined. */
+                /* Check if the operand is label that is defined. */
                 if (symbol_exists(linked_symbol, label) == FALSE)
                 {
                     sprintf(line->error_message, NO_LABEL_DEFINED, label);
                 }
             }
+        }
+        else if (is_stop_instruction(line->command)) /* stop */
+        {
+            sprintf(line->error_message, NO_INSTRUCTION_OPERANDS);
         }
     }
 }
