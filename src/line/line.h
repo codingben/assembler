@@ -99,7 +99,7 @@ typedef enum
     UNKNOWN_STATEMENT,
     EMPTY,
     COMMENT,
-    COMMAND, /* Rename it to opcode (or something else) */
+    COMMAND, /* Command is: add, sub, move, etc. */
     DIRECTIVE
 } statement_type;
 
@@ -150,8 +150,8 @@ typedef struct line
     char error_message[ERROR_MAX_LINE_LENGTH];
     statement_type statement_type;
     char label[MAX_LABEL_LENGTH];
-    char command[MAX_COMMAND_LENGTH];     /* remove it and make instruction only */
-    char directive[MAX_DIRECTIVE_LENGTH]; /* remove it and make instruction only */
+    char command[MAX_COMMAND_LENGTH]; /* Command is: add, sub, move, etc. */
+    char directive[MAX_DIRECTIVE_LENGTH];
     char operands[MAX_OPERANDS_SIZE][MAX_OPERANDS_SIZE];
     int operands_count;
     unsigned int address;
