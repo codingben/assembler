@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "../constants/boolean.h"
 #include "../line/line.h"
+#include "../line/validator.h"
 #include "../symbol/symbol.h"
 #include "../utils/line_helper.h"
 
@@ -11,9 +13,10 @@ void translate_i_instruction(Line *line, LinkedSymbol *linked_symbol);
 
 void translate_j_instruction(Line *line, LinkedSymbol *linked_symbol);
 
-int *translate(LinkedLine *linked_line, LinkedSymbol *linked_symbol)
+int translate(LinkedLine *linked_line, LinkedSymbol *linked_symbol)
 {
     Line *line = linked_line->head;
+    instruction_type type;
 
     for (; line != NULL; line = line->next)
     {
@@ -22,7 +25,7 @@ int *translate(LinkedLine *linked_line, LinkedSymbol *linked_symbol)
             continue;
         }
 
-        instruction_type type = find_instruction_type(line->command);
+        type = find_type(line->command);
 
         if (type == R)
         {
@@ -37,6 +40,8 @@ int *translate(LinkedLine *linked_line, LinkedSymbol *linked_symbol)
             translate_j_instruction(line, linked_symbol);
         }
     }
+
+    return TRUE;
 }
 
 void translate_r_instruction(Line *line)
@@ -65,33 +70,36 @@ void translate_i_instruction(Line *line, LinkedSymbol *linked_symbol)
 {
     if (is_arthematic_logic_i_instructions(line->command)) /* addi, subi, andi, ori, nori */
     {
-        line->i_instruction.opcode = find_command_opcode(line->command); /* addi $9, -45, $8 */
-        line->i_instruction.rs = find_register(line->operands[0]);       /* $9 */
-        line->i_instruction.rt = find_register(line->operands[1]);       /* $8 */
-        line->i_instruction.immed = line->operands[2];                   /* -45 */
+        line->i_instruction.opcode = find_opcode(line->command);   /* addi $9, -45, $8 */
+        line->i_instruction.rs = find_register(line->operands[0]); /* $9 */
+        line->i_instruction.rt = find_register(line->operands[1]); /* $8 */
+        line->i_instruction.immed = atoi(line->operands[2]);       /* -45 */
     }
     else if (is_conditional_branching_i_instructions(line->command)) /* beq, bne, blt, bgt */
     {
         char label[MAX_LABEL_LENGTH];
+        unsigned int curr_address = 0;
+        unsigned int dest_address = 0;
+        unsigned int address = 0;
 
-        line->i_instruction.opcode = find_command_opcode(line->command); /* blt $5, $24, loop */
-        line->i_instruction.rs = find_register(line->operands[0]);       /* $5 */
-        line->i_instruction.rt = find_register(line->operands[1]);       /* $24 */
+        line->i_instruction.opcode = find_opcode(line->command);   /* blt $5, $24, loop */
+        line->i_instruction.rs = find_register(line->operands[0]); /* $5 */
+        line->i_instruction.rt = find_register(line->operands[1]); /* $24 */
 
         strcpy(label, line->operands[2]);
 
-        unsigned int curr_address = line->address;                          /* 300 */
-        unsigned int dest_address = get_symbol_value(linked_symbol, label); /* 200 */
-        unsigned int address = (dest_address - curr_address);               /* 200 - 300 */
+        curr_address = line->address;                          /* 300 */
+        dest_address = get_symbol_value(linked_symbol, label); /* 200 */
+        address = (dest_address - curr_address);               /* 200 - 300 */
 
         line->i_instruction.immed = address;
     }
     else if (is_load_save_i_instructions(line->command)) /* lb, sb, lw, sw, lh, sh */
     {
-        line->i_instruction.opcode = find_command_opcode(line->command); /* lh $9, 34, $2 */
-        line->i_instruction.rs = find_register(line->operands[0]);       /* $9 */
-        line->i_instruction.rt = find_register(line->operands[1]);       /* $2 */
-        line->i_instruction.immed = line->operands[2];                   /* 34 */
+        line->i_instruction.opcode = find_opcode(line->command);   /* lh $9, 34, $2 */
+        line->i_instruction.rs = find_register(line->operands[0]); /* $9 */
+        line->i_instruction.rt = find_register(line->operands[1]); /* $2 */
+        line->i_instruction.immed = atoi(line->operands[2]);       /* 34 */
     }
 }
 
@@ -103,14 +111,14 @@ void translate_j_instruction(Line *line, LinkedSymbol *linked_symbol)
         line->j_instruction.reg = 0;
         line->j_instruction.address = 0;
     }
-    else /* jmp, la, call */
+    else if (is_j_instruction_except_stop(line->command)) /* jmp, la, call */
     {
         line->j_instruction.opcode = find_opcode(line->command);  /* jmp $register / jmp label */
         line->j_instruction.reg = is_register(line->operands[0]); /* $register / label */
 
         if (line->j_instruction.reg == FALSE)
         {
-            if (symbol_exsts(linked_symbol, line->operands[0]))
+            if (symbol_exists(linked_symbol, line->operands[0]))
             {
                 line->j_instruction.address = get_symbol_value(linked_symbol, line->operands[0]); /* label */
             }

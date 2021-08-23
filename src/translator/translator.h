@@ -4,6 +4,6 @@
 #ifndef TRANSLATOR_H
 #define TRANSLATOR_H
 
-int *translate(LinkedLine *linked_line, LinkedSymbol *linked_symbol)
+int translate(LinkedLine *linked_line, LinkedSymbol *linked_symbol);
 
 #endif
