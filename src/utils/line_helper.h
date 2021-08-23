@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021 Ben Ukhanov. All rights reserved.
+ */
+
 #include "../line/line.h"
 
 #ifndef LINE_HELPER_H

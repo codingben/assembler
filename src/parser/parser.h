@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021 Ben Ukhanov. All rights reserved.
+ */
+
 #include "../symbol/symbol.h"
 
 #ifndef PARSER_H

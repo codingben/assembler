@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021 Ben Ukhanov. All rights reserved.
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include "../line/line.h"

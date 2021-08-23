@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021 Ben Ukhanov. All rights reserved.
+ */
+
 #ifndef ANALYZER_H
 #define ANALYZER_H
 

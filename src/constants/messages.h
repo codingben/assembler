@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021 Ben Ukhanov. All rights reserved.
+ */
+
 #ifndef MESSAGES_H
 #define MESSAGES_H
 

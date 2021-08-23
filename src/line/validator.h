@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021 Ben Ukhanov. All rights reserved.
+ */
+
 #ifndef VALIDATOR_H
 #define VALIDATOR_H
 
