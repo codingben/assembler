@@ -34,6 +34,8 @@ void set_symbol_type(LinkedSymbol *linked_symbol, char *name, symbol_type type);
 
 symbol_type get_symbol_type(LinkedSymbol *linked_symbol, char *name);
 
+unsigned int get_symbol_value(LinkedSymbol *linked_symbol, char *name);
+
 void set_symbol_value(LinkedSymbol *linked_symbol, char *name, unsigned int value);
 
 int symbol_exists(LinkedSymbol *linked_symbol, char *name);

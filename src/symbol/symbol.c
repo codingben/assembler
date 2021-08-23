@@ -93,6 +93,21 @@ symbol_type get_symbol_type(LinkedSymbol *linked_symbol, char *name)
     return DATA;
 }
 
+unsigned int get_symbol_value(LinkedSymbol *linked_symbol, char *name)
+{
+    Symbol *symbol = linked_symbol->head;
+
+    for (; symbol != NULL; symbol = symbol->next)
+    {
+        if (strcmp(symbol->name, name) == 0)
+        {
+            return symbol->value;
+        }
+    }
+
+    return 0;
+}
+
 void set_symbol_value(LinkedSymbol *linked_symbol, char *name, unsigned int value)
 {
     Symbol *symbol = linked_symbol->head;
