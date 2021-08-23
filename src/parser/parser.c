@@ -88,8 +88,6 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
         }
     }
 
-    printf("IC: %d\n", instruction_counter);
-
     return parsed;
 }
 
