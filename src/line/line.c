@@ -15,6 +15,7 @@ Line *create_line()
         return NULL;
     }
 
+    line->address = 0;
     line->next = NULL;
     return line;
 }

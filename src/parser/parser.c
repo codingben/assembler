@@ -37,8 +37,7 @@ void update_symbol_value(Line *line, LinkedSymbol *linked_symbol);
 
 void update_instruction_counter(Line *line);
 
-/* IC */
-int instruction_counter = 100; /* TODO: Make this local and make one ICF */
+int instruction_counter = 100;
 int data_counter = 0;
 
 int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_symbol)
@@ -79,8 +78,8 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
 
             if (parse_instructions(line, linked_symbol))
             {
-                update_symbol_value(line, linked_symbol);
                 update_instruction_counter(line);
+                update_symbol_value(line, linked_symbol);
 
                 if (parse_operands(line, linked_symbol))
                 {
@@ -91,6 +90,8 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
             display_line_error(file_name, line);
         }
     }
+
+    printf("DC: %d\n", data_counter);
 
     return parsed;
 }
@@ -456,12 +457,14 @@ void update_symbol_value(Line *line, LinkedSymbol *linked_symbol)
         char *temp = duplicate(line->label);
         temp = remove_last_character(temp);
 
-        set_symbol_value(linked_symbol, temp, instruction_counter);
+        set_symbol_value(linked_symbol, temp, line->address);
     }
 }
 
 void update_instruction_counter(Line *line)
 {
+    line->address = instruction_counter;
+
     if (line->statement_type == COMMAND)
     {
         instruction_counter += 4;
@@ -470,17 +473,15 @@ void update_instruction_counter(Line *line)
     {
         if (is_db(line->directive))
         {
-            instruction_counter += 1;
+            data_counter += 1;
         }
         else if (is_dh(line->directive))
         {
-            instruction_counter += 2;
+            data_counter += 2;
         }
         else
         {
-            instruction_counter += 4;
+            data_counter += 4;
         }
     }
-
-    line->address = instruction_counter;
 }
