@@ -77,8 +77,8 @@ void translate_i_instruction(Line *line, LinkedSymbol *linked_symbol)
     {
         line->i_instruction.opcode = find_opcode(line->command);   /* addi $9, -45, $8 */
         line->i_instruction.rs = find_register(line->operands[0]); /* $9 */
-        line->i_instruction.rt = find_register(line->operands[1]); /* $8 */
-        line->i_instruction.immed = atoi(line->operands[2]);       /* -45 */
+        line->i_instruction.immed = atoi(line->operands[1]);       /* -45 */
+        line->i_instruction.rt = find_register(line->operands[2]); /* $8 */
     }
     else if (is_conditional_branching_i_instructions(line->command)) /* beq, bne, blt, bgt */
     {
@@ -103,8 +103,8 @@ void translate_i_instruction(Line *line, LinkedSymbol *linked_symbol)
     {
         line->i_instruction.opcode = find_opcode(line->command);   /* lh $9, 34, $2 */
         line->i_instruction.rs = find_register(line->operands[0]); /* $9 */
-        line->i_instruction.rt = find_register(line->operands[1]); /* $2 */
-        line->i_instruction.immed = atoi(line->operands[2]);       /* 34 */
+        line->i_instruction.immed = atoi(line->operands[1]);       /* 34 */
+        line->i_instruction.rt = find_register(line->operands[2]); /* $2 */
     }
 }
 
@@ -125,7 +125,11 @@ void translate_j_instruction(Line *line, LinkedSymbol *linked_symbol)
         {
             if (symbol_exists(linked_symbol, line->operands[0]))
             {
+                printf("Label: %s\n", line->operands[0]);
+
                 line->j_instruction.address = get_symbol_value(linked_symbol, line->operands[0]); /* label */
+
+                printf("Value: %d\n", line->j_instruction.address);
             }
             else
             {
