@@ -21,6 +21,8 @@ int translate(LinkedLine *linked_line, LinkedSymbol *linked_symbol)
 {
     Line *line = linked_line->head;
 
+    /* NOTE: All lines passed validation and should have operands, etc. */
+
     for (; line != NULL; line = line->next)
     {
         instruction_type type;
