@@ -40,6 +40,7 @@ void update_instruction_counter(Line *line);
 int instruction_counter = 100;
 int data_counter = 0;
 
+/* Split parse to first pass and second pass functions */
 int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_symbol)
 {
     Line *line = linked_line->head;
@@ -479,7 +480,7 @@ void update_instruction_counter(Line *line)
         {
             data_counter += 2;
         }
-        else
+        else if (is_entry(line->directive) == FALSE && is_extern(line->directive) == FALSE)
         {
             data_counter += 4;
         }
