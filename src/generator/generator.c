@@ -3,8 +3,11 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include "../constants/boolean.h"
 #include "../line/line.h"
+#include "../line/validator.h"
+#include "../symbol/symbol.h"
 #include "../utils/line_helper.h"
 
 void generate_r_instructions(Line *line);
@@ -13,7 +16,7 @@ void generate_i_instructions(Line *line);
 
 void generate_j_instructions(Line *line);
 
-int generate(LinkedLine *linked_line)
+int generate(LinkedLine *linked_line, LinkedSymbol *linked_symbol)
 {
     Line *line = linked_line->head;
 
@@ -41,6 +44,27 @@ int generate(LinkedLine *linked_line)
         else if (line->statement_type == DIRECTIVE)
         {
             /* TODO: Implement */
+        }
+
+        /* TODO: Split to functions */
+
+        if (is_entry(line->directive))
+        {
+            if (symbol_exists(linked_symbol, line->operands[0]))
+            {
+                unsigned int symbol_value =
+                    get_symbol_value(linked_symbol, line->operands[0]);
+
+                printf("%s %d\n", line->operands[0], symbol_value);
+            }
+        }
+
+        if (is_j_instruction_except_stop(line->command))
+        {
+            if (symbol_exists(linked_symbol, line->operands[0]))
+            {
+                printf("%s %d\n", line->operands[0], line->address);
+            }
         }
     }
 

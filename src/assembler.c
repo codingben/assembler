@@ -86,7 +86,7 @@ int main(int argument_count, char **argument_vector)
                 {
                     printf("# Generating...\n");
 
-                    if (generate(linked_line))
+                    if (generate(linked_line, linked_symbol))
                     {
                         printf("# Generated.\n");
                     }
