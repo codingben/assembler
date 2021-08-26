@@ -86,9 +86,13 @@ int main(int argument_count, char **argument_vector)
                 {
                     printf("# Generating...\n");
 
-                    if (generate(linked_line, linked_symbol))
+                    if (generate(file_name, linked_line, linked_symbol))
                     {
                         printf("# Generated.\n");
+                    }
+                    else
+                    {
+                        printf(ERROR_FORMAT, file_name, GENERATION_FAILED);
                     }
                 }
                 else

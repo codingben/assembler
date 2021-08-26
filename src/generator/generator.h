@@ -8,6 +8,6 @@
 #ifndef GENERATOR_H
 #define GENERATOR_H
 
-int generate(LinkedLine *linked_line, LinkedSymbol *linked_symbol);
+int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_symbol);
 
 #endif

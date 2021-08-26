@@ -40,7 +40,7 @@ void update_instruction_counter(Line *line);
 int instruction_counter = 100;
 int data_counter = 0;
 
-/* Split parse to first pass and second pass functions */
+/* TODO: Split parse to first pass and second pass functions */
 int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_symbol)
 {
     Line *line = linked_line->head;
@@ -186,7 +186,7 @@ int parse_label(Line *line, char *label)
     {
         strcpy(line->error_message, MAX_EQUALS_COMMAND);
     }
-    else if (is_label_equals_directive(label))
+    else if (is_label_equals_directive(label)) /* TODO: Can it be "asciz"? */
     {
         strcpy(line->error_message, MAX_EQUALS_DIRECTIVE);
     }
