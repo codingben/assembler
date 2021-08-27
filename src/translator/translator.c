@@ -129,11 +129,11 @@ void translate_j_instruction(Line *line, LinkedSymbol *linked_symbol)
             {
                 /* TODO: Fix here this shit (do data image after instruction image) */
 
-                printf("Label: %s\n", line->operands[0]);
+                /* printf("Label: %s\n", line->operands[0]); */
 
                 line->j_instruction.address = get_symbol_value(linked_symbol, line->operands[0]); /* label */
 
-                printf("Value: %d\n", line->j_instruction.address);
+                /* printf("Value: %d\n", line->j_instruction.address); */
             }
             else
             {
