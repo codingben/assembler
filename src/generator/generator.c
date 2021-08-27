@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../constants/boolean.h"
+#include "../constants/messages.h"
+#include "../constants/logger.h"
 #include "../line/line.h"
 #include "../line/validator.h"
 #include "../symbol/symbol.h"
@@ -29,10 +31,6 @@ void generate_entry(const char *file_name, FILE *entry_file, Line *line, LinkedS
 
 void generate_external(const char *file_name, FILE *extern_file, Line *line, LinkedSymbol *linked_symbol);
 
-int can_generate_entry(Line *line, LinkedSymbol *linked_symbol);
-
-int can_generate_external(Line *line, LinkedSymbol *linked_symbol);
-
 void generate_r_instructions(Line *line, FILE *file);
 
 void generate_i_instructions(Line *line, FILE *file);
@@ -40,6 +38,10 @@ void generate_i_instructions(Line *line, FILE *file);
 void generate_j_instructions(Line *line, FILE *file);
 
 void write_instruction(FILE *file, unsigned int address, unsigned int value);
+
+int has_entry(Line *line, LinkedSymbol *linked_symbol);
+
+int has_external(Line *line, LinkedSymbol *linked_symbol);
 
 int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_symbol)
 {
@@ -52,78 +54,38 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
     {
         if (line->statement_type == COMMAND)
         {
-            if (object_file == NULL)
-            {
-                char *object_file_name =
-                    rename_file_name_extension(file_name, OBJECT_FILE_EXTENSION);
-
-                if (object_file_name != NULL)
-                {
-                    object_file = fopen(object_file_name, "w+");
-                }
-
-                free(object_file_name);
-
-                if (object_file == NULL)
-                {
-                    return FALSE;
-                }
-            }
-
-            if (can_generate_external(line, linked_symbol))
+            if (has_external(line, linked_symbol))
             {
                 if (extern_file == NULL)
                 {
-                    /* TODO: extern_file = open_file(...) */
-
-                    char *extern_file_name =
-                        rename_file_name_extension(file_name, EXTERNAL_FILE_EXTENSION);
-
-                    if (extern_file_name != NULL)
-                    {
-                        extern_file = fopen(extern_file_name, "w+");
-                    }
-
-                    free(extern_file_name);
-
-                    if (extern_file == NULL)
-                    {
-                        return FALSE;
-                    }
+                    extern_file = open_file(file_name, EXTERNAL_FILE_EXTENSION);
                 }
 
                 generate_external(file_name, extern_file, line, linked_symbol);
+            }
+
+            if (object_file == NULL)
+            {
+                object_file = open_file(file_name, OBJECT_FILE_EXTENSION);
             }
 
             generate_code_image(file_name, object_file, line);
         }
         else if (line->statement_type == DIRECTIVE)
         {
-            if (can_generate_entry(line, linked_symbol))
+            if (has_entry(line, linked_symbol))
             {
                 if (entry_file == NULL)
                 {
-                    char *entry_file_name =
-                        rename_file_name_extension(file_name, ENTRY_FILE_EXTENSION);
-
-                    if (entry_file_name != NULL)
-                    {
-                        entry_file = fopen(entry_file_name, "w+");
-                    }
-
-                    free(entry_file_name);
-
-                    if (entry_file == NULL)
-                    {
-                        return FALSE;
-                    }
+                    entry_file = open_file(file_name, ENTRY_FILE_EXTENSION);
                 }
 
                 generate_entry(file_name, entry_file, line, linked_symbol);
             }
-
-            /* Shouldn't it called after this loop in another loop to avoid output conflict? */
-            /* generate_data_image(file_name, object_file, line); */
+            else
+            {
+                generate_data_image(file_name, object_file, line);
+            }
         }
     }
 
@@ -176,23 +138,6 @@ void generate_entry(const char *file_name, FILE *entry_file, Line *line, LinkedS
     fprintf(entry_file, "%s 0%d\n", line->operands[0], symbol_value);
 }
 
-int can_generate_entry(Line *line, LinkedSymbol *linked_symbol)
-{
-    /* In case it's not a ".entry" line. */
-    if (is_entry(line->directive) == FALSE)
-    {
-        return FALSE;
-    }
-
-    /* In case the operand of ".entry (operand)" is not found in the symbol table. */
-    if (symbol_exists(linked_symbol, line->operands[0]) == FALSE)
-    {
-        return FALSE;
-    }
-
-    return TRUE;
-}
-
 void generate_external(const char *file_name, FILE *extern_file, Line *line, LinkedSymbol *linked_symbol)
 {
     symbol_type symbol_value =
@@ -202,23 +147,6 @@ void generate_external(const char *file_name, FILE *extern_file, Line *line, Lin
     {
         fprintf(extern_file, "%s 0%d\n", line->operands[0], line->address);
     }
-}
-
-int can_generate_external(Line *line, LinkedSymbol *linked_symbol)
-{
-    /* In case it's not a J instruction line. */
-    if (is_j_instruction_except_stop(line->command) == FALSE)
-    {
-        return FALSE;
-    }
-
-    /* In case the operand of J instruction is not found in the symbol table. */
-    if (symbol_exists(linked_symbol, line->operands[0]) == FALSE)
-    {
-        return FALSE;
-    }
-
-    return TRUE;
 }
 
 void generate_r_instructions(Line *line, FILE *file)
@@ -276,4 +204,38 @@ void write_instruction(FILE *file, unsigned int address, unsigned int value)
     }
 
     fprintf(file, NEW_LINE);
+}
+
+int has_entry(Line *line, LinkedSymbol *linked_symbol)
+{
+    /* In case it's not a ".entry" line. */
+    if (is_entry(line->directive) == FALSE)
+    {
+        return FALSE;
+    }
+
+    /* In case the operand of ".entry (operand)" is not found in the symbol table. */
+    if (symbol_exists(linked_symbol, line->operands[0]) == FALSE)
+    {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+int has_external(Line *line, LinkedSymbol *linked_symbol)
+{
+    /* In case it's not a J instruction line. */
+    if (is_j_instruction_except_stop(line->command) == FALSE)
+    {
+        return FALSE;
+    }
+
+    /* In case the operand of J instruction is not found in the symbol table. */
+    if (symbol_exists(linked_symbol, line->operands[0]) == FALSE)
+    {
+        return FALSE;
+    }
+
+    return TRUE;
 }
