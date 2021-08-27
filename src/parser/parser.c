@@ -13,6 +13,10 @@
 #include "../utils/line_helper.h"
 #include "../symbol/symbol.h"
 
+int first_parse(const char *file_name, Line *line, LinkedSymbol *linked_symbol);
+
+int second_parse(const char *file_name, Line *line, LinkedSymbol *linked_symbol);
+
 int parse_symbols(Line *line, LinkedSymbol *linked_symbol);
 
 int parse_label(Line *line, char *label);
@@ -40,13 +44,24 @@ void update_instruction_counter(Line *line);
 int instruction_counter = 100;
 int data_counter = 0;
 
-/* TODO: Split parse to first pass and second pass functions */
 int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_symbol)
 {
-    Line *line = linked_line->head;
+    /* First pass, parse all symbols (for symbol table). */
+    int succeed = first_parse(file_name, linked_line->head, linked_symbol);
+
+    if (succeed)
+    {
+        /* Second pass, parse all instructions and operands. */
+        second_parse(file_name, linked_line->head, linked_symbol);
+    }
+
+    return succeed;
+}
+
+int first_parse(const char *file_name, Line *line, LinkedSymbol *linked_symbol)
+{
     int parsed = FALSE;
 
-    /* First pass, parse all symbols (for symbol table). */
     for (; line != NULL; line = line->next)
     {
         if (is_empty_line(line->text))
@@ -65,36 +80,33 @@ int parse(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linked_s
         display_line_error(file_name, line);
     }
 
-    if (parsed)
+    return parsed;
+}
+
+int second_parse(const char *file_name, Line *line, LinkedSymbol *linked_symbol)
+{
+    for (; line != NULL; line = line->next)
     {
-        line = linked_line->head;
-
-        /* Second pass, parse all instructions and operands. */
-        for (; line != NULL; line = line->next)
+        if (line->statement_type == EMPTY || line->statement_type == COMMENT)
         {
-            if (line->statement_type == EMPTY || line->statement_type == COMMENT)
-            {
-                continue;
-            }
-
-            if (parse_instructions(line, linked_symbol))
-            {
-                update_instruction_counter(line);
-                update_symbol_value(line, linked_symbol);
-
-                if (parse_operands(line, linked_symbol))
-                {
-                    validate_parsed_operands(line, linked_symbol);
-                }
-            }
-
-            display_line_error(file_name, line);
+            continue;
         }
+
+        if (parse_instructions(line, linked_symbol))
+        {
+            update_instruction_counter(line);
+            update_symbol_value(line, linked_symbol);
+
+            if (parse_operands(line, linked_symbol))
+            {
+                validate_parsed_operands(line, linked_symbol);
+            }
+        }
+
+        display_line_error(file_name, line);
     }
 
-    printf("DC: %d\n", data_counter);
-
-    return parsed;
+    return TRUE;
 }
 
 int parse_symbols(Line *line, LinkedSymbol *linked_symbol)
@@ -186,7 +198,7 @@ int parse_label(Line *line, char *label)
     {
         strcpy(line->error_message, MAX_EQUALS_COMMAND);
     }
-    else if (is_label_equals_directive(label)) /* TODO: Can it be "asciz"? */
+    else if (is_label_equals_directive(label))
     {
         strcpy(line->error_message, MAX_EQUALS_DIRECTIVE);
     }
