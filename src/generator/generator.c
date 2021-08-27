@@ -14,7 +14,7 @@
 #include "../utils/line_helper.h"
 #include "../utils/file_helper.h"
 
-#define ONE_BYTE 8
+#define ONE_BYTE_OFFSET 8
 #define FOUR_BITS 4
 #define LEFT_HEX_DIGIT 0xF0
 #define RIGHT_HEX_DIGIT 0x0F
@@ -22,6 +22,8 @@
 #define LEFT_HEX_FORMAT "%X"
 #define RIGHT_HEX_FORMAT "%X "
 #define NEW_LINE "\n"
+#define ENTRY_FORMAT "%s 0%d\n"
+#define EXTERNAL_FORMAT "%s 0%d\n"
 
 void generate_code_image(const char *file_name, FILE *object_file, Line *line);
 
@@ -135,7 +137,7 @@ void generate_entry(const char *file_name, FILE *entry_file, Line *line, LinkedS
     unsigned int symbol_value =
         get_symbol_value(linked_symbol, line->operands[0]);
 
-    fprintf(entry_file, "%s 0%d\n", line->operands[0], symbol_value);
+    fprintf(entry_file, ENTRY_FORMAT, line->operands[0], symbol_value);
 }
 
 void generate_external(const char *file_name, FILE *extern_file, Line *line, LinkedSymbol *linked_symbol)
@@ -145,7 +147,7 @@ void generate_external(const char *file_name, FILE *extern_file, Line *line, Lin
 
     if (symbol_value == EXTERNAL)
     {
-        fprintf(extern_file, "%s 0%d\n", line->operands[0], line->address);
+        fprintf(extern_file, EXTERNAL_FORMAT, line->operands[0], line->address);
     }
 }
 
@@ -200,7 +202,7 @@ void write_instruction(FILE *file, unsigned int address, unsigned int value)
         fprintf(file, LEFT_HEX_FORMAT, left);
         fprintf(file, RIGHT_HEX_FORMAT, right);
 
-        value = value >> ONE_BYTE;
+        value = value >> ONE_BYTE_OFFSET;
     }
 
     fprintf(file, NEW_LINE);
