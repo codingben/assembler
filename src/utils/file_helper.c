@@ -2,9 +2,12 @@
  * Copyright (c) 2021 Ben Ukhanov. All rights reserved.
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../constants/boolean.h"
+#include "../constants/messages.h"
+#include "../constants/logger.h"
 #include "../utils/file_helper.h"
 
 int validate_extension(const char *filename)
@@ -40,4 +43,26 @@ char *rename_file_name_extension(const char *file_name, const char *extension)
     /* Add the new file with a new extension. */
     strcat(new_file_name, extension);
     return new_file_name;
+}
+
+FILE *open_file(const char *file_name, const char *extension)
+{
+    char *new_file_name =
+        rename_file_name_extension(file_name, extension);
+
+    if (new_file_name != NULL)
+    {
+        FILE *file = fopen(new_file_name, "w+");
+
+        if (file == NULL)
+        {
+            printf(ERROR_FORMAT, file_name, FAILED_CREATE_FILE);
+            exit(1);
+        }
+
+        free(new_file_name);
+        return file;
+    }
+
+    return NULL;
 }

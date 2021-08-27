@@ -10,6 +10,7 @@
 #define FAILED_ANALYZE_FILE "unable to analyze the assembly file.\n"
 #define FAILED_TRANSLATE_FILE "unable to translate the assembly file.\n"
 #define GENERATION_FAILED "unable to generate output files.\n"
+#define FAILED_CREATE_FILE "could not create file.\n"
 #define MAX_LENGTH_LABEL "label length has reached its limit.\n"
 #define MAX_EQUALS_COMMAND "label cannot be command.\n"
 #define MAX_EQUALS_DIRECTIVE "label cannot be directive.\n"

@@ -15,4 +15,6 @@ int validate_extension(const char *filename);
 
 char *rename_file_name_extension(const char *file_name, const char *extension);
 
+FILE *open_file(const char *file_name, const char *extension);
+
 #endif
