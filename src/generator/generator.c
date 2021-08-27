@@ -96,7 +96,7 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
                 unsigned int symbol_value =
                     get_symbol_value(linked_symbol, line->operands[0]);
 
-                fprintf(entry_file, "%s %d\n", line->operands[0], symbol_value);
+                fprintf(entry_file, "%s 0%d\n", line->operands[0], symbol_value);
             }
         }
 
@@ -122,7 +122,13 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
 
             if (symbol_exists(linked_symbol, line->operands[0]))
             {
-                fprintf(extern_file, "%s %d\n", line->operands[0], line->address);
+                symbol_type symbol_value =
+                    get_symbol_type(linked_symbol, line->operands[0]);
+
+                if (symbol_value == EXTERNAL)
+                {
+                    fprintf(extern_file, "%s 0%d\n", line->operands[0], line->address);
+                }
             }
         }
     }
