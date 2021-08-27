@@ -27,7 +27,9 @@ char *rename_file_name_extension(const char *file_name, const char *extension)
         return NULL;
     }
 
-    /* Remove ".as" from the file name. */
+    memcpy(new_file_name, file_name, length);
+
+    /* Remove ".as" extension from the file name. */
     temp = strstr(new_file_name, ASSEMBLY_EXTENSION);
 
     if (temp)
@@ -35,7 +37,7 @@ char *rename_file_name_extension(const char *file_name, const char *extension)
         *temp = '\0';
     }
 
-    /* Add the new file extension ".ob". */
-    strcat(new_file_name, OBJECT_FILE_EXTENSION);
+    /* Add the new file with a new extension. */
+    strcat(new_file_name, extension);
     return new_file_name;
 }
