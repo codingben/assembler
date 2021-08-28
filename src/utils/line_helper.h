@@ -27,4 +27,10 @@ int find_opcode(char *name);
 
 char *convert_asciz_to_hex(char *data);
 
+char *convert_db_to_hex(char *data);
+
+char *convert_dh_to_hex(char *data);
+
+char *convert_dw_to_hex(char *data);
+
 #endif

@@ -7,6 +7,12 @@
 #include <string.h>
 #include "../line/line.h"
 
+#define REVERSE(x) (REVERSE_1(x) | (REVERSE_2(x) | (REVERSE_3(x) | REVERSE_4(x))
+#define REVERSE_1(x) ((x & 0xff000000) >> 24)
+#define REVERSE_2(x) ((x & 0x00ff0000) << 8) >> 16)
+#define REVERSE_3(x) ((x & 0x0000ff00) >> 8) << 16)
+#define REVERSE_4(x) ((x & 0x000000ff) << 24)
+
 char *duplicate(char *value)
 {
     int length = strlen(value) + 1;
@@ -137,15 +143,64 @@ char *convert_asciz_to_hex(char *data)
     int i;
     int length = strlen(data); /* E.g. "aBcd" = 4. */
     char *result = calloc(0, length * sizeof(char));
-    Asciz_Word asciz_word;
+    Asciz_Data asciz_data;
+    char temp[3];
 
     for (i = 0; i < length; i++)
     {
         char temp[3];
-        asciz_word.data = data[i];
-        sprintf(temp, "%02X", asciz_word.data);
+
+        asciz_data.data = data[i];
+
+        sprintf(temp, "%02X", asciz_data.data);
         strncat(result, temp, 3);
     }
 
+    asciz_data.data = data[i];
+
+    sprintf(temp, "%02X", '\0');
+    strncat(result, temp, 3);
+    return result;
+}
+
+char *convert_db_to_hex(char *data)
+{
+    Db_Data db_data;
+    int length = strlen(data);
+    char *result = calloc(0, length * sizeof(char));
+    char temp[3];
+
+    db_data.data = atoi(data);
+
+    sprintf(temp, "%02X", db_data.data);
+    strncat(result, temp, 3);
+    return result;
+}
+
+char *convert_dh_to_hex(char *data)
+{
+    Dh_Data dh_data;
+    int length = strlen(data);
+    char *result = calloc(0, length * sizeof(char));
+    char temp[9];
+
+    dh_data.data = atoi(data);
+
+    sprintf(temp, "%04X", REVERSE(dh_data.data) >> 16);
+    strncat(result, temp, 9);
+    return result;
+}
+
+char *convert_dw_to_hex(char *data)
+{
+    Dw_Data dw_data;
+    int length = strlen(data);
+    char *result = calloc(0, length * sizeof(char));
+    char temp[9];
+
+    dw_data.data = atoi(data);
+
+    sprintf(temp, "%08X", REVERSE(dw_data.data));
+    strncat(result, temp, 9);
     return result;
 }
