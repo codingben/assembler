@@ -19,7 +19,22 @@
 typedef struct
 {
     unsigned int data : 8; /* 1 Byte */
-} Asciz_Word;
+} Asciz_Data;
+
+typedef struct
+{
+    unsigned int data : 8; /* 1 Byte */
+} Db_Data;
+
+typedef struct
+{
+    unsigned int data : 16; /* 2 Byte */
+} Dh_Data;
+
+typedef struct
+{
+    unsigned int data : 32; /* 4 Byte */
+} Dw_Data;
 
 typedef struct
 {

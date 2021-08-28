@@ -28,12 +28,10 @@
 #define COUNTERS_FORMAT "\t %d %d\n"
 #define DATA_FORMAT "%c%c "
 
-extern int instruction_counter;
-extern int data_counter;
+extern int instruction_counter; /* ICF */
+extern int data_counter;        /* DCF */
 
 void generate_code_image(const char *file_name, FILE *file, Line *line);
-
-/* void generate_data_image(const char *file_name, FILE *file, Line *line); */
 
 void generate_entry(const char *file_name, FILE *file, Line *line, LinkedSymbol *linked_symbol);
 
@@ -49,7 +47,7 @@ void write_counters(FILE *file);
 
 void write_code_image(FILE *file, unsigned int address, unsigned int value);
 
-void write_data_image(FILE *file, unsigned int address, char *data);
+void write_data_image(FILE *file, char *data);
 
 int has_entry(Line *line, LinkedSymbol *linked_symbol);
 
@@ -61,6 +59,9 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
     FILE *object_file = NULL;
     FILE *extern_file = NULL;
     FILE *entry_file = NULL;
+
+    int data_image_length = 0;
+    char *data_image = calloc(0, data_image_length);
 
     for (; line != NULL; line = line->next)
     {
@@ -105,16 +106,70 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
                     write_counters(object_file);
                 }
 
+                /* TODO: Refactor into functions. */
+
                 if (is_asciz(line->directive))
                 {
                     char *hex = convert_asciz_to_hex(line->operands[0]);
+                    int hex_length = strlen(hex);
 
-                    write_data_image(object_file, line->address, hex);
+                    data_image_length += sizeof(hex) * hex_length;
+                    data_image = realloc(data_image, data_image_length);
 
-                    free(hex);
+                    strncat(data_image, hex, hex_length);
+                }
+                else if (is_db(line->directive))
+                {
+                    int i;
+
+                    for (i = 0; i < line->operands_count; i++)
+                    {
+                        char *db = convert_db_to_hex(line->operands[i]);
+                        int db_length = strlen(db);
+
+                        data_image_length += sizeof(db) * db_length;
+                        data_image = realloc(data_image, data_image_length);
+
+                        strncat(data_image, db, db_length);
+                    }
+                }
+                else if (is_dh(line->directive))
+                {
+                    int i;
+
+                    for (i = 0; i < line->operands_count; i++)
+                    {
+                        char *dh = convert_dh_to_hex(line->operands[i]);
+                        int dh_length = strlen(dh);
+
+                        data_image_length += sizeof(dh) * dh_length;
+                        data_image = realloc(data_image, data_image_length);
+
+                        strncat(data_image, dh, dh_length);
+                    }
+                }
+                else if (is_dw(line->directive))
+                {
+                    int i;
+
+                    for (i = 0; i < line->operands_count; i++)
+                    {
+                        char *dw = convert_dw_to_hex(line->operands[i]);
+                        int dw_length = strlen(dw);
+
+                        data_image_length += sizeof(dw) * dw_length;
+                        data_image = realloc(data_image, data_image_length);
+
+                        strncat(data_image, dw, dw_length);
+                    }
                 }
             }
         }
+    }
+
+    if (object_file != NULL)
+    {
+        write_data_image(object_file, data_image);
     }
 
     if (object_file != NULL)
@@ -234,14 +289,14 @@ void write_code_image(FILE *file, unsigned int address, unsigned int value)
     fprintf(file, NEW_LINE);
 }
 
-void write_data_image(FILE *file, unsigned int address, char *data)
+void write_data_image(FILE *file, char *data)
 {
     int i;
     int length = strlen(data); /* E.g. "00B0E0N0" = 8. */
-    int data_counter = 1;
-    int line_address = (instruction_counter - FOUR_BYTES) + address;
+    int counter = 1;
+    int dc = 0;
 
-    fprintf(file, OB_ADDRESS_FORMAT, line_address);
+    fprintf(file, OB_ADDRESS_FORMAT, (instruction_counter) + dc);
 
     for (i = 0; i < length; i += 2)
     {
@@ -249,15 +304,18 @@ void write_data_image(FILE *file, unsigned int address, char *data)
         fprintf(file, DATA_FORMAT, data[i], data[i + 1]);
 
         /* If we have: "00 B0 E0 N0", then new line. */
-        if (data_counter == 4)
+        if (counter == 4)
         {
-            fprintf(file, NEW_LINE);
+            dc += 4;
 
-            data_counter = 1;
+            fprintf(file, NEW_LINE);
+            fprintf(file, OB_ADDRESS_FORMAT, (instruction_counter) + dc);
+
+            counter = 1;
         }
         else
         {
-            data_counter++;
+            counter++;
         }
     }
 }
