@@ -33,7 +33,7 @@ extern int data_counter;
 
 void generate_code_image(const char *file_name, FILE *file, Line *line);
 
-void generate_data_image(const char *file_name, FILE *file, Line *line);
+/* void generate_data_image(const char *file_name, FILE *file, Line *line); */
 
 void generate_entry(const char *file_name, FILE *file, Line *line, LinkedSymbol *linked_symbol);
 
@@ -49,7 +49,7 @@ void write_counters(FILE *file);
 
 void write_code_image(FILE *file, unsigned int address, unsigned int value);
 
-void write_data_image(FILE *file, char *data);
+void write_data_image(FILE *file, unsigned int address, char *data);
 
 int has_entry(Line *line, LinkedSymbol *linked_symbol);
 
@@ -98,9 +98,20 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
             }
             else
             {
-                if (object_file != NULL)
+                if (object_file == NULL)
                 {
-                    generate_data_image(file_name, object_file, line);
+                    object_file = open_file(file_name, OBJECT_FILE_EXTENSION);
+
+                    write_counters(object_file);
+                }
+
+                if (is_asciz(line->directive))
+                {
+                    char *hex = convert_asciz_to_hex(line->operands[0]);
+
+                    write_data_image(object_file, line->address, hex);
+
+                    free(hex);
                 }
             }
         }
@@ -140,12 +151,6 @@ void generate_code_image(const char *file_name, FILE *file, Line *line)
     {
         generate_j_instructions(line, file);
     }
-}
-
-void generate_data_image(const char *file_name, FILE *file, Line *line)
-{
-    /*fprintf(file, OB_ADDRESS_FORMAT, instruction_counter + line->address);
-    fprintf(file, NEW_LINE);*/
 }
 
 void generate_entry(const char *file_name, FILE *file, Line *line, LinkedSymbol *linked_symbol)
@@ -229,11 +234,14 @@ void write_code_image(FILE *file, unsigned int address, unsigned int value)
     fprintf(file, NEW_LINE);
 }
 
-void write_data_image(FILE *file, char *data)
+void write_data_image(FILE *file, unsigned int address, char *data)
 {
     int i;
     int length = strlen(data); /* E.g. "00B0E0N0" = 8. */
     int data_counter = 1;
+    int line_address = (instruction_counter - FOUR_BYTES) + address;
+
+    fprintf(file, OB_ADDRESS_FORMAT, line_address);
 
     for (i = 0; i < length; i += 2)
     {

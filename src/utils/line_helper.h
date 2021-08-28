@@ -25,4 +25,6 @@ int find_funct(char *name);
 
 int find_opcode(char *name);
 
+char *convert_asciz_to_hex(char *data);
+
 #endif

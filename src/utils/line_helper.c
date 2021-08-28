@@ -2,6 +2,7 @@
  * Copyright (c) 2021 Ben Ukhanov. All rights reserved.
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../line/line.h"
@@ -129,4 +130,22 @@ int find_opcode(char *name)
     }
 
     return 0;
+}
+
+char *convert_asciz_to_hex(char *data)
+{
+    int i;
+    int length = strlen(data); /* E.g. "aBcd" = 4. */
+    char *result = calloc(0, length * sizeof(char));
+    Asciz_Word asciz_word;
+
+    for (i = 0; i < length; i++)
+    {
+        char temp[3];
+        asciz_word.data = data[i];
+        sprintf(temp, "%02X", asciz_word.data);
+        strncat(result, temp, 3);
+    }
+
+    return result;
 }

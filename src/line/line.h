@@ -18,6 +18,11 @@
 
 typedef struct
 {
+    unsigned int data : 8; /* 1 Byte */
+} Asciz_Word;
+
+typedef struct
+{
     unsigned int opcode : 6;
     unsigned int rs : 5;
     unsigned int rt : 5;
