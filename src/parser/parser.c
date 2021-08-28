@@ -476,25 +476,27 @@ void update_symbol_value(Line *line, LinkedSymbol *linked_symbol)
 
 void update_instruction_counter(Line *line)
 {
-    line->address = instruction_counter;
-
     if (line->statement_type == COMMAND)
     {
+        line->address = instruction_counter;
+
         instruction_counter += 4;
     }
     else if (line->statement_type == DIRECTIVE)
     {
         if (is_db(line->directive))
         {
-            data_counter += 1;
+            data_counter += 4;
         }
         else if (is_dh(line->directive))
         {
-            data_counter += 2;
+            data_counter += 4;
         }
         else if (is_entry(line->directive) == FALSE && is_extern(line->directive) == FALSE)
         {
             data_counter += 4;
         }
+
+        line->address = data_counter;
     }
 }
