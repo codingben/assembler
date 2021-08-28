@@ -14,24 +14,29 @@
 #include "../utils/line_helper.h"
 #include "../utils/file_helper.h"
 
+#define IC_DEFAULT 100
+#define HIGH_NIBBLE(x) (((x) >> 4) & 0x0F)
+#define LOW_NIBBLE(x) ((x)&0x0F)
 #define ONE_BYTE_OFFSET 8
-#define FOUR_BITS 4
-#define LEFT_HEX_DIGIT 0xF0
-#define RIGHT_HEX_DIGIT 0x0F
+#define FOUR_BYTES 4
 #define OB_ADDRESS_FORMAT "0%d "
 #define LEFT_HEX_FORMAT "%X"
 #define RIGHT_HEX_FORMAT "%X "
 #define NEW_LINE "\n"
 #define ENTRY_FORMAT "%s 0%d\n"
 #define EXTERNAL_FORMAT "%s 0%d\n"
+#define COUNTERS_FORMAT "\t %d %d\n"
 
-void generate_code_image(const char *file_name, FILE *object_file, Line *line);
+extern int instruction_counter;
+extern int data_counter;
 
-void generate_data_image(const char *file_name, FILE *object_file, Line *line);
+void generate_code_image(const char *file_name, FILE *file, Line *line);
 
-void generate_entry(const char *file_name, FILE *entry_file, Line *line, LinkedSymbol *linked_symbol);
+void generate_data_image(const char *file_name, FILE *file, Line *line);
 
-void generate_external(const char *file_name, FILE *extern_file, Line *line, LinkedSymbol *linked_symbol);
+void generate_entry(const char *file_name, FILE *file, Line *line, LinkedSymbol *linked_symbol);
+
+void generate_external(const char *file_name, FILE *file, Line *line, LinkedSymbol *linked_symbol);
 
 void generate_r_instructions(Line *line, FILE *file);
 
@@ -40,6 +45,8 @@ void generate_i_instructions(Line *line, FILE *file);
 void generate_j_instructions(Line *line, FILE *file);
 
 void write_instruction(FILE *file, unsigned int address, unsigned int value);
+
+void write_counters(FILE *file);
 
 int has_entry(Line *line, LinkedSymbol *linked_symbol);
 
@@ -69,6 +76,8 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
             if (object_file == NULL)
             {
                 object_file = open_file(file_name, OBJECT_FILE_EXTENSION);
+
+                write_counters(object_file);
             }
 
             generate_code_image(file_name, object_file, line);
@@ -86,7 +95,10 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
             }
             else
             {
-                generate_data_image(file_name, object_file, line);
+                if (object_file != NULL)
+                {
+                    generate_data_image(file_name, object_file, line);
+                }
             }
         }
     }
@@ -109,45 +121,46 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
     return TRUE;
 }
 
-void generate_code_image(const char *file_name, FILE *object_file, Line *line)
+void generate_code_image(const char *file_name, FILE *file, Line *line)
 {
     instruction_type type = find_type(line->command);
 
     if (type == R)
     {
-        generate_r_instructions(line, object_file);
+        generate_r_instructions(line, file);
     }
     else if (type == I)
     {
-        generate_i_instructions(line, object_file);
+        generate_i_instructions(line, file);
     }
     else if (type == J)
     {
-        generate_j_instructions(line, object_file);
+        generate_j_instructions(line, file);
     }
 }
 
-void generate_data_image(const char *file_name, FILE *object_file, Line *line)
+void generate_data_image(const char *file_name, FILE *file, Line *line)
 {
-    /* TODO: Implement */
+    fprintf(file, OB_ADDRESS_FORMAT, instruction_counter + line->address);
+    fprintf(file, NEW_LINE);
 }
 
-void generate_entry(const char *file_name, FILE *entry_file, Line *line, LinkedSymbol *linked_symbol)
+void generate_entry(const char *file_name, FILE *file, Line *line, LinkedSymbol *linked_symbol)
 {
     unsigned int symbol_value =
         get_symbol_value(linked_symbol, line->operands[0]);
 
-    fprintf(entry_file, ENTRY_FORMAT, line->operands[0], symbol_value);
+    fprintf(file, ENTRY_FORMAT, line->operands[0], symbol_value);
 }
 
-void generate_external(const char *file_name, FILE *extern_file, Line *line, LinkedSymbol *linked_symbol)
+void generate_external(const char *file_name, FILE *file, Line *line, LinkedSymbol *linked_symbol)
 {
     symbol_type symbol_value =
         get_symbol_type(linked_symbol, line->operands[0]);
 
     if (symbol_value == EXTERNAL)
     {
-        fprintf(extern_file, EXTERNAL_FORMAT, line->operands[0], line->address);
+        fprintf(file, EXTERNAL_FORMAT, line->operands[0], line->address);
     }
 }
 
@@ -194,18 +207,23 @@ void write_instruction(FILE *file, unsigned int address, unsigned int value)
 
     fprintf(file, OB_ADDRESS_FORMAT, address);
 
-    for (i = 0; i < FOUR_BITS; i++)
+    for (i = 0; i < FOUR_BYTES; i++)
     {
-        unsigned int left = (value & LEFT_HEX_DIGIT) >> FOUR_BITS;
-        unsigned int right = value & RIGHT_HEX_DIGIT;
-
-        fprintf(file, LEFT_HEX_FORMAT, left);
-        fprintf(file, RIGHT_HEX_FORMAT, right);
+        fprintf(file, LEFT_HEX_FORMAT, HIGH_NIBBLE(value));
+        fprintf(file, RIGHT_HEX_FORMAT, LOW_NIBBLE(value));
 
         value = value >> ONE_BYTE_OFFSET;
     }
 
     fprintf(file, NEW_LINE);
+}
+
+void write_counters(FILE *file)
+{
+    int ic = instruction_counter - IC_DEFAULT;
+    int dc = data_counter + 1;
+
+    fprintf(file, COUNTERS_FORMAT, ic, dc);
 }
 
 int has_entry(Line *line, LinkedSymbol *linked_symbol)
