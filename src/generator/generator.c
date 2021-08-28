@@ -26,6 +26,7 @@
 #define ENTRY_FORMAT "%s 0%d\n"
 #define EXTERNAL_FORMAT "%s 0%d\n"
 #define COUNTERS_FORMAT "\t %d %d\n"
+#define DATA_FORMAT "%c%c "
 
 extern int instruction_counter;
 extern int data_counter;
@@ -44,9 +45,11 @@ void generate_i_instructions(Line *line, FILE *file);
 
 void generate_j_instructions(Line *line, FILE *file);
 
-void write_instruction(FILE *file, unsigned int address, unsigned int value);
-
 void write_counters(FILE *file);
+
+void write_code_image(FILE *file, unsigned int address, unsigned int value);
+
+void write_data_image(FILE *file, char *data);
 
 int has_entry(Line *line, LinkedSymbol *linked_symbol);
 
@@ -141,8 +144,8 @@ void generate_code_image(const char *file_name, FILE *file, Line *line)
 
 void generate_data_image(const char *file_name, FILE *file, Line *line)
 {
-    fprintf(file, OB_ADDRESS_FORMAT, instruction_counter + line->address);
-    fprintf(file, NEW_LINE);
+    /*fprintf(file, OB_ADDRESS_FORMAT, instruction_counter + line->address);
+    fprintf(file, NEW_LINE);*/
 }
 
 void generate_entry(const char *file_name, FILE *file, Line *line, LinkedSymbol *linked_symbol)
@@ -175,7 +178,7 @@ void generate_r_instructions(Line *line, FILE *file)
     value = value | line->r_instruction.funct << 6;   /* 10 - 6 */
     value = value | line->r_instruction.unused;       /* 5 - 0 */
 
-    write_instruction(file, line->address, value);
+    write_code_image(file, line->address, value);
 }
 
 void generate_i_instructions(Line *line, FILE *file)
@@ -187,7 +190,7 @@ void generate_i_instructions(Line *line, FILE *file)
     value = value | (line->i_instruction.rt << 16);     /* 20 - 16 */
     value = value | (line->i_instruction.immed);        /* 15 - 0 */
 
-    write_instruction(file, line->address, value);
+    write_code_image(file, line->address, value);
 }
 
 void generate_j_instructions(Line *line, FILE *file)
@@ -198,10 +201,18 @@ void generate_j_instructions(Line *line, FILE *file)
     value = value | (line->j_instruction.reg << 25);     /* 25 */
     value = value | (line->j_instruction.address << 24); /* 24 - 0 */
 
-    write_instruction(file, line->address, value);
+    write_code_image(file, line->address, value);
 }
 
-void write_instruction(FILE *file, unsigned int address, unsigned int value)
+void write_counters(FILE *file)
+{
+    int ic = instruction_counter - IC_DEFAULT;
+    int dc = data_counter + 1;
+
+    fprintf(file, COUNTERS_FORMAT, ic, dc);
+}
+
+void write_code_image(FILE *file, unsigned int address, unsigned int value)
 {
     int i;
 
@@ -218,12 +229,29 @@ void write_instruction(FILE *file, unsigned int address, unsigned int value)
     fprintf(file, NEW_LINE);
 }
 
-void write_counters(FILE *file)
+void write_data_image(FILE *file, char *data)
 {
-    int ic = instruction_counter - IC_DEFAULT;
-    int dc = data_counter + 1;
+    int i;
+    int length = strlen(data); /* E.g. "00B0E0N0" = 8. */
+    int data_counter = 1;
 
-    fprintf(file, COUNTERS_FORMAT, ic, dc);
+    for (i = 0; i < length; i += 2)
+    {
+        /* Will print: "00" (data[i] = '0' and data[i + 1] = '0'). */
+        fprintf(file, DATA_FORMAT, data[i], data[i + 1]);
+
+        /* If we have: "00 B0 E0 N0", then new line. */
+        if (data_counter == 4)
+        {
+            fprintf(file, NEW_LINE);
+
+            data_counter = 1;
+        }
+        else
+        {
+            data_counter++;
+        }
+    }
 }
 
 int has_entry(Line *line, LinkedSymbol *linked_symbol)
