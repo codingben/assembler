@@ -117,6 +117,8 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
                     data_image = realloc(data_image, data_image_length);
 
                     strncat(data_image, hex, hex_length);
+
+                    free(hex);
                 }
                 else if (is_db(line->directive))
                 {
@@ -131,6 +133,8 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
                         data_image = realloc(data_image, data_image_length);
 
                         strncat(data_image, db, db_length);
+
+                        free(db);
                     }
                 }
                 else if (is_dh(line->directive))
@@ -146,6 +150,8 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
                         data_image = realloc(data_image, data_image_length);
 
                         strncat(data_image, dh, dh_length);
+
+                        free(dh);
                     }
                 }
                 else if (is_dw(line->directive))
@@ -161,6 +167,8 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
                         data_image = realloc(data_image, data_image_length);
 
                         strncat(data_image, dw, dw_length);
+
+                        free(dw);
                     }
                 }
             }
@@ -187,6 +195,7 @@ int generate(const char *file_name, LinkedLine *linked_line, LinkedSymbol *linke
         fclose(entry_file);
     }
 
+    free(data_image);
     return TRUE;
 }
 
