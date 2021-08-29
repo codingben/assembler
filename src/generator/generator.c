@@ -275,7 +275,7 @@ void generate_j_instructions(Line *line, FILE *file)
 
 void write_counters(FILE *file)
 {
-    int ic = instruction_counter - IC_DEFAULT;
+    int ic = (instruction_counter - data_counter) - IC_DEFAULT;
     int dc = data_counter + 1;
 
     fprintf(file, COUNTERS_FORMAT, ic, dc);
@@ -305,7 +305,7 @@ void write_data_image(FILE *file, char *data)
     int counter = 1;
     int dc = 0;
 
-    fprintf(file, OB_ADDRESS_FORMAT, (instruction_counter) + dc);
+    fprintf(file, OB_ADDRESS_FORMAT, (instruction_counter - data_counter) + dc);
 
     for (i = 0; i < length; i += 2)
     {
@@ -318,7 +318,7 @@ void write_data_image(FILE *file, char *data)
             dc += 4;
 
             fprintf(file, NEW_LINE);
-            fprintf(file, OB_ADDRESS_FORMAT, (instruction_counter) + dc);
+            fprintf(file, OB_ADDRESS_FORMAT, (instruction_counter - data_counter) + dc);
 
             counter = 1;
         }

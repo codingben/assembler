@@ -484,19 +484,12 @@ void update_instruction_counter(Line *line)
     }
     else if (line->statement_type == DIRECTIVE)
     {
-        if (is_db(line->directive))
+        if (is_entry(line->directive) == FALSE && is_extern(line->directive) == FALSE)
         {
-            data_counter += 4;
-        }
-        else if (is_dh(line->directive))
-        {
-            data_counter += 4;
-        }
-        else if (is_entry(line->directive) == FALSE && is_extern(line->directive) == FALSE)
-        {
+            instruction_counter += 4;
             data_counter += 4;
         }
 
-        line->address = data_counter;
+        line->address = instruction_counter;
     }
 }
