@@ -37,6 +37,7 @@ int main(int argument_count, char **argument_vector)
         int analyzed = FALSE;
         int parsed = FALSE;
         int translated = FALSE;
+        int generated = FALSE;
 
         /* Steps:
          * 1. if (validated) analyze (scanner)
@@ -74,36 +75,38 @@ int main(int argument_count, char **argument_vector)
 
             /* Parse the syntax. */
             parsed = parse(file_name, linked_line, linked_symbol);
-
-            if (parsed)
-            {
-                printf("# Translating...\n");
-
-                /* Translate the parsed syntax. */
-                translated = translate(linked_line, linked_symbol);
-
-                if (translated)
-                {
-                    printf("# Generating...\n");
-
-                    if (generate(file_name, linked_line, linked_symbol))
-                    {
-                        printf("# Generated.\n");
-                    }
-                    else
-                    {
-                        printf(ERROR_FORMAT, file_name, GENERATION_FAILED);
-                    }
-                }
-                else
-                {
-                    printf(ERROR_FORMAT, file_name, FAILED_TRANSLATE_FILE);
-                }
-            }
         }
         else
         {
             printf(ERROR_FORMAT, file_name, FAILED_ANALYZE_FILE);
+        }
+
+        if (parsed)
+        {
+            printf("# Translating...\n");
+
+            /* Translate the parsed syntax. */
+            translated = translate(linked_line, linked_symbol);
+        }
+
+        if (translated)
+        {
+            printf("# Generating...\n");
+
+            generated = generate(file_name, linked_line, linked_symbol);
+        }
+        else
+        {
+            printf(ERROR_FORMAT, file_name, FAILED_TRANSLATE_FILE);
+        }
+
+        if (generated)
+        {
+            printf("# Generated.\n");
+        }
+        else
+        {
+            printf(ERROR_FORMAT, file_name, GENERATION_FAILED);
         }
 
         delete_linked_line(linked_line);
