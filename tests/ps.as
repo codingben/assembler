@@ -17,7 +17,7 @@ Next: move  $20, $4
       la    wNumber
 END:  stop
 .extern vall
-STR:  .asciz "aBed"
+STR:  .asciz "aBcd"
 LIST: .db   6, -9
       .dh   27056
 K:    .dw   31, -12
